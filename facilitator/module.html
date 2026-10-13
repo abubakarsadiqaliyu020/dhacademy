@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Learning Module - Development Hub LMS
+    </title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="module.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     HEADER
+======================================== -->
+
+<header class="top-header">
+
+    <div class="header-left">
+
+        <h1>
+            Development Hub LMS
+        </h1>
+
+        <p>
+            Facilitator Portal
+        </p>
+
+    </div>
+
+
+    <button
+        id="logoutBtn"
+        class="logout-btn"
+        type="button"
+    >
+        Logout
+    </button>
+
+</header>
+
+
+
+<!-- ========================================
+     MAIN CONTENT
+======================================== -->
+
+<main class="main-container">
+
+
+    <!-- BACK TO CLASS -->
+
+    <a
+        href="#"
+        id="backToClass"
+        class="back-link"
+    >
+        ← Back to Class
+    </a>
+
+
+
+    <!-- ========================================
+         MODULE INFORMATION
+    ======================================== -->
+
+    <section class="module-header">
+
+        <span class="module-label">
+            Learning Module
+        </span>
+
+
+        <h2 id="moduleTitle">
+            Loading module...
+        </h2>
+
+
+        <p id="moduleDescription">
+            Please wait while the module loads.
+        </p>
+
+    </section>
+
+
+
+    <!-- ========================================
+         LEARNING MATERIALS
+    ======================================== -->
+
+    <section class="content-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Learning Materials
+                </h2>
+
+                <p>
+                    Create and manage learning materials
+                    for this module.
+                </p>
+
+            </div>
+
+
+            <button
+                id="addMaterialBtn"
+                class="primary-btn"
+                type="button"
+            >
+                + Add Learning Material
+            </button>
+
+        </div>
+
+
+        <div id="materialsContainer">
+
+            <div class="loading-box">
+
+                <div class="loader"></div>
+
+                <p>
+                    Loading learning materials...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ========================================
+         ASSIGNMENTS
+    ======================================== -->
+
+    <section class="content-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Assignments
+                </h2>
+
+                <p>
+                    Create and manage assignments
+                    for this module.
+                </p>
+
+            </div>
+
+
+            <button
+                id="addAssignmentBtn"
+                class="primary-btn"
+                type="button"
+            >
+                + Create Assignment
+            </button>
+
+        </div>
+
+
+        <div id="assignmentsContainer">
+
+            <div class="loading-box">
+
+                <div class="loader"></div>
+
+                <p>
+                    Loading assignments...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- ========================================
+     LEARNING MATERIAL MODAL
+======================================== -->
+
+<div
+    id="materialModal"
+    class="modal-overlay"
+>
+
+    <div class="modal-box large-modal">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Add Learning Material
+                </h2>
+
+                <p>
+                    Create a lesson directly inside the LMS.
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeMaterialModal"
+                class="close-modal"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <form id="materialForm">
+
+
+            <!-- MATERIAL TITLE -->
+
+            <div class="form-group">
+
+                <label for="materialTitle">
+                    Material Title
+                </label>
+
+                <input
+                    type="text"
+                    id="materialTitle"
+                    placeholder="Example: Introduction to Python"
+                    required
+                >
+
+            </div>
+
+
+
+            <!-- MATERIAL DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label for="materialDescription">
+                    Short Description
+                </label>
+
+                <textarea
+                    id="materialDescription"
+                    rows="3"
+                    placeholder="Briefly describe this learning material..."
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- MATERIAL CONTENT -->
+
+            <div class="form-group">
+
+                <label for="materialContent">
+                    Lesson Content
+                </label>
+
+                <div class="lesson-editor-toolbar" role="toolbar" aria-label="Lesson formatting tools">
+                    <button type="button" class="editor-tool-btn" data-command="bold"><b>B</b></button>
+                    <button type="button" class="editor-tool-btn" data-command="italic"><i>I</i></button>
+                    <button type="button" class="editor-tool-btn" data-command="underline"><u>U</u></button>
+                    <button type="button" class="editor-tool-btn" data-command="strikeThrough"><s>S</s></button>
+                    <select id="lessonBlockFormat" aria-label="Text style"><option value="p">Paragraph</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option></select>
+                    <select id="lessonFontSize" aria-label="Font size"><option value="3">Normal size</option><option value="2">Small</option><option value="4">Large</option><option value="5">Larger</option><option value="6">Very large</option></select>
+                    <button type="button" class="editor-tool-btn" data-command="justifyLeft">Left</button>
+                    <button type="button" class="editor-tool-btn" data-command="justifyCenter">Centre</button>
+                    <button type="button" class="editor-tool-btn" data-command="justifyRight">Right</button>
+                    <button type="button" class="editor-tool-btn" data-command="justifyFull">Justify</button>
+                    <button type="button" class="editor-tool-btn" data-command="insertUnorderedList">• List</button>
+                    <button type="button" class="editor-tool-btn" data-command="insertOrderedList">1. List</button>
+                    <label class="editor-tool-label">Text <input id="lessonTextColor" type="color" value="#222222" aria-label="Text colour"></label>
+                    <label class="editor-tool-label">Highlight <input id="lessonHighlightColor" type="color" value="#fff59d" aria-label="Highlight colour"></label>
+                    <button type="button" class="editor-tool-btn" data-command="undo">Undo</button>
+                    <button type="button" class="editor-tool-btn" data-command="redo">Redo</button>
+                    <button type="button" class="editor-tool-btn" id="clearLessonFormattingBtn">Clear formatting</button>
+                    <button type="button" class="editor-tool-btn" id="insertLessonTableBtn">Insert table</button>
+                    <button type="button" class="editor-tool-btn" id="addTableRowBtn">Add row</button>
+                    <button type="button" class="editor-tool-btn" id="deleteTableRowBtn">Delete row</button>
+                    <button type="button" class="editor-tool-btn" id="addTableColumnBtn">Add column</button>
+                    <button type="button" class="editor-tool-btn" id="deleteTableColumnBtn">Delete column</button>
+                    <button type="button" class="editor-tool-btn" id="insertLessonCodeBtn">Insert code</button>
+                    <button type="button" class="editor-tool-btn" id="previewLessonBtn">Preview</button>
+                </div>
+                <div id="materialContent" class="lesson-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Lesson content" data-placeholder="Write lesson notes here. Paste content from Microsoft Word, add tables, and insert code blocks."></div>
+                <div id="lessonPreviewPanel" class="lesson-preview-panel" hidden>
+                    <h3>Student Preview</h3><div id="lessonPreviewContent" class="lesson-content"></div>
+                </div>
+
+            </div>
+
+
+
+            <!-- LANGUAGE -->
+
+            <div class="form-group">
+
+                <label for="materialLanguage">
+                    Main Code Language
+                </label>
+
+                <select id="materialLanguage">
+
+                    <option value="text">
+                        General Text
+                    </option>
+
+                    <option value="python">
+                        Python
+                    </option>
+
+                    <option value="html">
+                        HTML
+                    </option>
+
+                    <option value="css">
+                        CSS
+                    </option>
+
+                    <option value="javascript">
+                        JavaScript
+                    </option>
+
+                    <option value="sql">
+                        SQL
+                    </option>
+
+                    <option value="java">
+                        Java
+                    </option>
+
+                    <option value="c">
+                        C
+                    </option>
+
+                    <option value="cpp">
+                        C++
+                    </option>
+
+                    <option value="php">
+                        PHP
+                    </option>
+
+                    <option value="json">
+                        JSON
+                    </option>
+
+                    <option value="bash">
+                        Bash
+                    </option>
+
+                    <option value="markdown">
+                        Markdown
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <p id="materialMessage"></p>
+
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="cancelMaterialBtn"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Save Learning Material
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     ASSIGNMENT MODAL
+======================================== -->
+
+<div
+    id="assignmentModal"
+    class="modal-overlay"
+>
+
+    <div class="modal-box large-modal">
+
+
+        <!-- MODAL HEADER -->
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Create Assignment
+                </h2>
+
+                <p>
+                    Create questions that students will answer individually.
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeAssignmentModal"
+                class="close-modal"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <form id="assignmentForm">
+
+
+            <!-- ====================================
+                 ASSIGNMENT TITLE
+            ==================================== -->
+
+            <div class="form-group">
+
+                <label for="assignmentTitle">
+                    Assignment Title
+                </label>
+
+                <input
+                    type="text"
+                    id="assignmentTitle"
+                    placeholder="Example: Python Variables Assignment"
+                    required
+                >
+
+            </div>
+
+
+
+            <!-- ====================================
+                 ASSIGNMENT INSTRUCTIONS
+            ==================================== -->
+
+            <div class="form-group">
+
+                <label for="assignmentInstructions">
+                    Assignment Instructions
+                </label>
+
+                <textarea
+                    id="assignmentInstructions"
+                    rows="6"
+                    placeholder="Write the general instructions for students..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- ====================================
+                 DUE DATE
+            ==================================== -->
+
+            <div class="form-group">
+
+                <label for="assignmentDueDate">
+                    Due Date
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="assignmentDueDate"
+                >
+
+            </div>
+
+
+
+            <!-- ====================================
+                 QUESTIONS
+            ==================================== -->
+
+            <div class="builder-section">
+
+                <div class="builder-heading">
+
+                    <div>
+
+                        <h3>
+                            Questions
+                        </h3>
+
+                        <p>
+                            Add the questions students will answer.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="addQuestionBtn"
+                        class="secondary-btn"
+                    >
+                        + Add Question
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="questionsContainer"
+                    class="questions-container"
+                >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ====================================
+                 MAXIMUM SCORE
+            ==================================== -->
+
+            <div class="form-group">
+
+                <label for="assignmentMaxScore">
+                    Maximum Score
+                </label>
+
+                <input
+                    type="number"
+                    id="assignmentMaxScore"
+                    value="0"
+                    readonly
+                >
+
+                <small>
+                    This is calculated automatically from
+                    the marks assigned to each question.
+                </small>
+
+            </div>
+
+
+
+            <!-- MESSAGE -->
+
+            <p id="assignmentMessage"></p>
+
+
+
+            <!-- ====================================
+                 FORM ACTIONS
+            ==================================== -->
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="cancelAssignmentBtn"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Create Assignment
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- ========================================
+     SCRIPTS
+======================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="../js/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="module.js"></script>
+
+
+</body>
+
+</html>

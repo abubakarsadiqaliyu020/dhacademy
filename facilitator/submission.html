@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Mark Submission - Development Hub LMS
+    </title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link
+        rel="stylesheet"
+        href="submission.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="top-header">
+
+        <div class="header-left">
+
+            <h1>
+                Development Hub LMS
+            </h1>
+
+            <p>
+                Facilitator Portal
+            </p>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+            type="button"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main-container">
+
+
+        <!-- BACK -->
+
+        <a
+            href="#"
+            id="backToAssignment"
+            class="back-link"
+        >
+            ← Back to Assignment
+        </a>
+
+
+
+        <!-- PAGE TITLE -->
+
+        <section class="page-header">
+
+            <div>
+
+                <span class="page-label">
+                    Student Submission
+                </span>
+
+                <h2 id="pageTitle">
+                    Loading submission...
+                </h2>
+
+                <p id="pageSubtitle">
+                    Please wait while the submission loads.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- STUDENT INFORMATION -->
+
+        <section class="info-section">
+
+            <div class="student-info">
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Student Name
+                    </span>
+
+                    <strong id="studentName">
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Student ID
+                    </span>
+
+                    <strong id="studentId">
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Submitted
+                    </span>
+
+                    <strong id="submittedAt">
+                        Loading...
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Status
+                    </span>
+
+                    <strong id="submissionStatus">
+                        Loading...
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- QUESTIONS -->
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Student Answers
+                    </h2>
+
+                    <p>
+                        Review each answer and award marks.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="answersContainer"
+            >
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+                    <p>
+                        Loading student answers...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RESULT SUMMARY -->
+
+        <section class="result-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Result
+                    </h2>
+
+                    <p>
+                        Review the total score before saving.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-summary">
+
+                <div class="result-card">
+
+                    <span>
+                        Total Score
+                    </span>
+
+                    <strong id="totalScore">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <span>
+                        Maximum Score
+                    </span>
+
+                    <strong id="maximumScore">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <span>
+                        Percentage
+                    </span>
+
+                    <strong id="percentage">
+                        0%
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- OVERALL FEEDBACK -->
+
+            <div class="overall-feedback">
+
+                <label
+                    for="overallFeedback"
+                >
+                    Overall Feedback
+                </label>
+
+                <textarea
+                    id="overallFeedback"
+                    rows="5"
+                    placeholder="Enter overall feedback for the student..."
+                ></textarea>
+
+            </div>
+
+
+
+            <!-- MESSAGE -->
+
+            <p
+                id="saveMessage"
+                class="save-message"
+            ></p>
+
+
+
+            <!-- SAVE -->
+
+            <div class="action-area">
+
+                <button
+                    id="saveMarkBtn"
+                    class="primary-btn"
+                    type="button"
+                >
+                    Save & Mark Submission
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- SUPABASE -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <script
+        src="../js/supabase.js"
+    ></script>
+
+
+    <script
+        src="submission.js"
+    ></script>
+
+</body>
+
+</html>

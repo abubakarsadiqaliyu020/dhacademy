@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Facilitators - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="facilitators.css">
+</head>
+
+<body>
+
+    <header class="top-header">
+
+        <div>
+            <h1>Development Hub LMS</h1>
+            <p>Admin Panel</p>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn">
+            Logout
+        </button>
+
+    </header>
+
+
+    <main class="page-container">
+
+        <div class="page-heading">
+
+            <div>
+                <h2>Manage Facilitators</h2>
+
+                <p>
+                    Add and manage Development Hub facilitators.
+                </p>
+                <p><a class="back-dashboard-link" href="dashboard.html">← Back to Admin Dashboard</a></p>
+            </div>
+
+            <button
+                id="addFacilitatorBtn"
+                class="primary-btn"
+            >
+                + Add Facilitator
+            </button>
+
+        </div>
+
+
+        <div id="message"></div>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name or Login ID..."
+            >
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>S/N</th>
+
+                        <th>Login ID</th>
+
+                        <th>Full Name</th>
+
+                        <th>Phone</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="facilitatorsTable">
+
+                    <tr>
+
+                        <td colspan="6">
+                            Loading facilitators...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- ADD FACILITATOR MODAL -->
+
+    <div
+        id="facilitatorModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>
+                    Add Facilitator
+                </h2>
+
+                <button
+                    id="closeModal"
+                    class="close-btn"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <form id="facilitatorForm">
+
+                <label for="loginId">
+                    Facilitator Login ID
+                </label>
+
+                <input
+                    type="text"
+                    id="loginId"
+                    placeholder="Example: FAC001"
+                    required
+                >
+
+
+                <label for="fullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Facilitator full name"
+                    required
+                >
+
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="text"
+                    id="phone"
+                    placeholder="08012345678"
+                >
+
+
+                <label for="password">
+                    Password / PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create password"
+                    minlength="6"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="primary-btn full-width"
+                >
+                    Create Facilitator
+                </button>
+
+            </form>
+
+
+            <p id="formMessage"></p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- RESET PIN MODAL -->
+
+    <div
+        id="resetPinModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>
+                    Reset Facilitator PIN
+                </h2>
+
+                <button
+                    id="closeResetPinModal"
+                    class="close-btn"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <div class="reset-info">
+
+                <p>
+                    Facilitator:
+                    <strong id="resetFacilitatorName">
+                        -
+                    </strong>
+                </p>
+
+                <p>
+                    Login ID:
+                    <strong id="resetFacilitatorId">
+                        -
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <form id="resetPinForm">
+
+                <label for="newPin">
+                    New PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="newPin"
+                    placeholder="Enter new PIN"
+                    minlength="6"
+                    required
+                >
+
+
+                <label for="confirmPin">
+                    Confirm New PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmPin"
+                    placeholder="Confirm new PIN"
+                    minlength="6"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="primary-btn full-width"
+                >
+                    Reset PIN
+                </button>
+
+            </form>
+
+
+            <p id="resetPinMessage"></p>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script src="facilitators.js"></script>
+
+</body>
+</html>

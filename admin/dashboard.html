@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="dashboard.css">
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <header class="dashboard-header">
+
+            <div>
+                <h1>Development Hub LMS</h1>
+                <p>Admin Dashboard</p>
+            </div>
+
+            <button id="logoutButton">
+                Logout
+            </button>
+
+        </header>
+
+
+        <main class="dashboard-content">
+
+            <h2>Welcome, <span id="adminName">Admin</span></h2>
+
+            <p>
+                Manage students, facilitators, classes and learning activities.
+            </p>
+
+
+            <div class="dashboard-cards">
+
+                <a href="students.html" class="dashboard-card">
+                    <h3>Students</h3>
+                    <p id="studentCount">0</p>
+                    <span>Manage Students →</span>
+                </a>
+
+                <a href="facilitators.html" class="dashboard-card">
+					<h3>Facilitators</h3>
+					<p id="facilitatorCount">0</p>
+					<span>Manage Facilitators →</span>
+				</a>
+				<a href="classes.html" class="dashboard-card">
+
+				<h3>
+					Classes
+				</h3>
+
+					<p id="classCount">
+							0
+					</p>
+
+				<span>
+					Manage Classes →
+				</span>
+				</a>
+
+                
+
+
+                <div class="dashboard-card">
+                    <h3>Assignments</h3>
+                    <p id="assignmentCount">0</p>
+                    <span>Created and graded by facilitators</span>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script>
+
+        async function loadAdminDashboard() {
+
+            const {
+                data: {
+                    user
+                }
+            } = await supabaseClient.auth.getUser();
+
+
+            if (!user) {
+
+                window.location.href = "../index.html";
+
+                return;
+
+            }
+
+
+            const {
+                data: profile,
+                error
+            } = await supabaseClient
+
+                .from("profiles")
+
+                .select("full_name, role, is_active")
+
+                .eq("id", user.id)
+
+                .single();
+
+
+            if (error) {
+
+                console.error(error);
+
+                return;
+
+            }
+
+
+            if (profile.role !== "admin") {
+
+                alert("You do not have permission to access this page.");
+
+                window.location.href = "../index.html";
+
+                return;
+
+            }
+
+
+            if (!profile.is_active) {
+                await supabaseClient.auth.signOut();
+                window.location.href = "../index.html";
+                return;
+            }
+
+            document.getElementById("adminName").textContent =
+                profile.full_name || "Admin";
+
+            loadCounts();
+        }
+
+        async function countRows(table, filterColumn, filterValue) {
+            let query = supabaseClient
+                .from(table)
+                .select("*", { count: "exact", head: true });
+
+            if (filterColumn) {
+                query = query.eq(filterColumn, filterValue);
+            }
+
+            const { count, error } = await query;
+
+            if (error) {
+                console.error("Count error (" + table + "):", error);
+                return "-";
+            }
+
+            return count ?? 0;
+        }
+
+        async function loadCounts() {
+            const [students, facilitators, classes, assignments] =
+                await Promise.all([
+                    countRows("profiles", "role", "student"),
+                    countRows("profiles", "role", "facilitator"),
+                    countRows("classes"),
+                    countRows("assignments")
+                ]);
+
+            document.getElementById("studentCount").textContent = students;
+            document.getElementById("facilitatorCount").textContent = facilitators;
+            document.getElementById("classCount").textContent = classes;
+            document.getElementById("assignmentCount").textContent = assignments;
+        }
+
+        async function logout() {
+            const button = document.getElementById("logoutButton");
+            if (!button) return;
+            const confirmed = window.confirm("Are you sure you want to log out?");
+            if (!confirmed) return;
+
+            button.disabled = true;
+            button.textContent = "Logging out...";
+            try {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                window.location.href = "../index.html";
+            } catch (error) {
+                console.error("Logout error:", error);
+                button.disabled = false;
+                button.textContent = "Logout";
+                window.alert("Unable to log out: " + error.message);
+            }
+        }
+
+        document.getElementById("logoutButton")?.addEventListener("click", logout);
+
+
+        loadAdminDashboard();
+
+    </script>
+
+</body>
+
+</html>

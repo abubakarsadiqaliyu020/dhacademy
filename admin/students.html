@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Students - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="students.css">
+
+</head>
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="top-header">
+
+        <div>
+
+            <h1>Development Hub LMS</h1>
+
+            <p>Admin Panel</p>
+
+        </div>
+
+
+        <button id="logoutBtn">
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="page-container">
+
+
+        <!-- Page Heading -->
+
+        <div class="page-heading">
+
+            <div>
+
+                <h2>Manage Students</h2>
+
+                <p>
+                    Add and manage Development Hub students.
+                </p>
+                <p><a class="back-dashboard-link" href="dashboard.html">← Back to Admin Dashboard</a></p>
+
+            </div>
+
+
+            <button
+                id="addStudentBtn"
+                class="primary-btn"
+            >
+                + Add Student
+            </button>
+
+        </div>
+
+
+
+        <!-- General Message -->
+
+        <div id="message"></div>
+
+
+
+        <!-- Search -->
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name or Student ID..."
+            >
+
+        </div>
+
+
+
+        <!-- Students Table -->
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>S/N</th>
+
+                        <th>Student ID</th>
+
+                        <th>Full Name</th>
+
+                        <th>Phone</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="studentsTable">
+
+                    <tr>
+
+                        <td colspan="6">
+                            Loading students...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =========================
+         ADD STUDENT MODAL
+    ========================== -->
+
+    <div
+        id="studentModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <h2>
+                    Add Student
+                </h2>
+
+
+                <button id="closeModal">
+                    &times;
+                </button>
+
+            </div>
+
+
+
+            <form id="studentForm">
+
+
+                <!-- Student ID -->
+
+                <label for="studentId">
+                    Student ID
+                </label>
+
+                <input
+                    type="text"
+                    id="studentId"
+                    placeholder="Example: DH/2026/001"
+                    required
+                >
+
+
+
+                <!-- Full Name -->
+
+                <label for="fullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Student full name"
+                    required
+                >
+
+
+
+                <!-- Phone -->
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="text"
+                    id="phone"
+                    placeholder="08012345678"
+                >
+
+
+
+                <!-- Password -->
+
+                <label for="password">
+                    Password / PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create password"
+                    minlength="6"
+                    required
+                >
+
+
+
+                <!-- Create Student -->
+
+                <button
+                    type="submit"
+                    class="primary-btn full-width"
+                >
+                    Create Student
+                </button>
+
+            </form>
+
+
+            <p id="formMessage"></p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         RESET PIN MODAL
+    ========================== -->
+
+    <div
+        id="resetPinModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <h2>
+                    Reset Student PIN
+                </h2>
+
+
+                <button id="closeResetPinModal">
+                    &times;
+                </button>
+
+            </div>
+
+
+
+            <!-- Student Information -->
+
+            <div class="student-reset-info">
+
+                <p>
+
+                    Student:
+
+                    <strong id="resetStudentName">
+                        -
+                    </strong>
+
+                </p>
+
+
+                <p>
+
+                    Student ID:
+
+                    <strong id="resetStudentId">
+                        -
+                    </strong>
+
+                </p>
+
+            </div>
+
+
+
+            <!-- Reset PIN Form -->
+
+            <form id="resetPinForm">
+
+
+                <label for="newPin">
+                    New PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="newPin"
+                    placeholder="Enter new PIN"
+                    minlength="6"
+                    required
+                >
+
+
+
+                <label for="confirmPin">
+                    Confirm New PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmPin"
+                    placeholder="Confirm new PIN"
+                    minlength="6"
+                    required
+                >
+
+
+
+                <button
+                    type="submit"
+                    class="primary-btn full-width"
+                >
+                    Reset PIN
+                </button>
+
+            </form>
+
+
+            <p id="resetPinMessage"></p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         SUPABASE
+    ======================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script src="students.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-box">
+		<div class="login-logo">
+			<img src="dh-logo.jpg" alt="Development Hub Logo">
+		</div>
+
+            <h1>Development Hub</h1>
+
+           <h3 class="subtitle">
+                Learning Management System
+            </h3>
+
+
+            <form id="loginForm">
+
+                <label for="loginId">
+                    Login ID
+                </label>
+
+                <input
+                    type="text"
+                    id="loginId"
+                    placeholder="Enter your Login ID"
+                    required
+                >
+
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+
+                <button type="submit">
+                    Login
+                </button>
+
+
+                <p id="message"></p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Supabase -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/login.js"></script>
+
+</body>
+
+</html>

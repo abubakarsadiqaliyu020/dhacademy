@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Class - Development Hub LMS
+    </title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link
+        rel="stylesheet"
+        href="class.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header class="top-header">
+
+        <div>
+
+            <h1>
+                Development Hub LMS
+            </h1>
+
+            <p>
+                Facilitator Portal
+            </p>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <main class="page-container">
+
+
+        <div class="back-row">
+
+            <a href="dashboard.html">
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+
+
+        <section class="class-header">
+
+            <div>
+
+                <h2 id="className">
+                    Loading class...
+                </h2>
+
+                <p id="classDescription">
+                    Please wait...
+                </p>
+
+            </div>
+
+
+            <div
+                id="classStatus"
+                class="status"
+            >
+                Loading...
+            </div>
+
+        </section>
+
+
+
+        <section class="summary-grid">
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Students
+                </h3>
+
+                <p id="studentCount">
+                    0
+                </p>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Modules
+                </h3>
+
+                <p id="moduleCount">
+                    0
+                </p>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <h3>
+                    Assignments
+                </h3>
+
+                <p id="assignmentCount">
+                    0
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Students
+                    </h2>
+
+                    <p>
+                        Students enrolled in this class.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                S/N
+                            </th>
+
+                            <th>
+                                Student ID
+                            </th>
+
+                            <th>
+                                Full Name
+                            </th>
+
+                            <th>
+                                Phone
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="studentsTable">
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                            >
+                                Loading students...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+<section class="content-section">
+
+    <div class="section-heading module-heading">
+
+        <div>
+
+            <h2>
+                Modules
+            </h2>
+
+            <p>
+                Learning modules for this class.
+            </p>
+
+        </div>
+
+
+        <button
+            id="addModuleBtn"
+            class="primary-btn"
+        >
+            + Add Module
+        </button>
+
+    </div>
+
+
+    <div
+        id="modulesContainer"
+        class="modules-container"
+    >
+
+        <div class="empty-card">
+
+            No modules have been created yet.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+                   
+               
+
+           
+
+
+
+    </main>
+<!-- ADD MODULE MODAL -->
+
+<div
+    id="moduleModal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                Add Module
+            </h2>
+
+            <button
+                id="closeModuleModal"
+                class="close-btn"
+            >
+                &times;
+            </button>
+
+        </div>
+
+
+        <form id="moduleForm">
+
+            <label for="moduleNumber">
+                Module Number
+            </label>
+
+            <input
+                type="number"
+                id="moduleNumber"
+                min="1"
+                placeholder="Example: 1"
+                required
+            >
+
+
+            <label for="moduleTitle">
+                Module Title
+            </label>
+
+            <input
+                type="text"
+                id="moduleTitle"
+                placeholder="Example: Introduction to Python"
+                required
+            >
+
+
+            <label for="moduleDescription">
+                Description
+            </label>
+
+            <textarea
+                id="moduleDescription"
+                placeholder="Brief description of this module"
+            ></textarea>
+
+
+            <button
+                type="submit"
+                class="primary-btn full-width"
+            >
+                Create Module
+            </button>
+
+        </form>
+
+
+        <p id="moduleMessage"></p>
+
+    </div>
+
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script src="class.js"></script>
+
+</body>
+
+</html>

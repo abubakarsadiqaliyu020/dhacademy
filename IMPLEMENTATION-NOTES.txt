@@ -1,0 +1,16 @@
+Development Hub LMS - Facilitator Editor Update
+
+Implemented in this package:
+- Word-like rich text toolbar in facilitator/module.html.
+- Rich-text lesson content is saved in the existing resources.content field; no database schema changes are made.
+- Table insertion and add/delete row/column controls.
+- Code block insertion, paste sanitization, lesson preview, and editing previously saved learning materials.
+- Student module renders sanitized rich HTML and code blocks with Copy Code buttons; legacy plain-text/Markdown materials remain supported.
+- Facilitator assignment modal Cancel/close controls now prompt before discarding unsaved changes.
+
+Not implemented in this package:
+- Assignment publication state and student blocking before publication. The existing assignments schema in the supplied project has no publication/status field. Correct enforcement also requires a matching Supabase Row Level Security (RLS) rule or trusted backend check; a client-only button would not securely block direct-link access. No schema or RLS changes were made without approval.
+
+Before deployment:
+- Test with a development Supabase project and test accounts.
+- Apply and verify an approved publication-column migration and student/facilitator RLS policies before enabling assignment publishing.

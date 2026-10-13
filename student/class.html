@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Class - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="class.css">
+
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+
+        <div>
+            <h1>Development Hub LMS</h1>
+            <p>Student Portal</p>
+        </div>
+
+        <button id="logoutBtn">
+            Logout
+        </button>
+
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Back -->
+        <a href="dashboard.html" class="back-link">
+            ← Back to My Classes
+        </a>
+
+
+        <!-- Class Information -->
+        <section class="welcome">
+
+            <h2 id="className">
+                Loading class...
+            </h2>
+
+            <p id="classDescription">
+                Please wait while the class information loads.
+            </p>
+
+            <span id="classStatus">
+                Loading...
+            </span>
+
+        </section>
+
+
+        <!-- Students -->
+        <section class="section">
+
+            <h2>My Class</h2>
+
+            <div class="info-card">
+
+                <h3>
+                    Class Information
+                </h3>
+
+                <p id="classInfo">
+                    Loading class information...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- Modules -->
+        <section class="section">
+
+            <h2>Modules</h2>
+
+            <div id="modulesContainer">
+
+                <div class="card">
+
+                    <h3>
+                        Loading modules...
+                    </h3>
+
+                    <p>
+                        Please wait.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Assignments -->
+        <section class="section">
+
+            <h2>Assignments</h2>
+
+            <div id="assignmentsContainer">
+
+                <div class="card">
+
+                    <h3>
+                        No assignments yet
+                    </h3>
+
+                    <p>
+                        Assignments for this class will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script src="class.js"></script>
+
+</body>
+
+</html>

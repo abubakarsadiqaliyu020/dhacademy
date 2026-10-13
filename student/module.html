@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Learning Module - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="module.css">
+
+</head>
+
+
+<body>
+
+
+    <header class="top-header">
+
+        <div class="header-left">
+
+            <h1>Development Hub LMS</h1>
+
+            <p>Student Portal</p>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+            type="button"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <main class="main-container">
+
+
+        <a
+            href="#"
+            id="backToClass"
+            class="back-link"
+        >
+            ← Back to Class
+        </a>
+
+
+
+        <section class="module-header">
+
+            <div>
+
+                <span class="module-label">
+                    Learning Module
+                </span>
+
+
+                <h2 id="moduleTitle">
+                    Loading module...
+                </h2>
+
+
+                <p id="moduleDescription">
+                    Please wait while the module loads.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Learning Materials</h2>
+
+                    <p>
+                        Read the learning materials below.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="materialsContainer">
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+                    <p>
+                        Loading learning materials...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Assignments</h2>
+
+                    <p>
+                        Complete the assignments for this module.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="assignmentsContainer">
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+                    <p>
+                        Loading assignments...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+
+    <script src="module.js"></script>
+
+
+</body>
+
+</html>

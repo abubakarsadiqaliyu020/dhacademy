@@ -1,0 +1,445 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top-header {
+    background: #1e3a8a;
+    color: white;
+
+    padding: 20px 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.top-header h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+
+.top-header p {
+    font-size: 14px;
+}
+
+
+.logout-btn {
+    background: white;
+    color: #1e3a8a;
+
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+
+.logout-btn:hover {
+    background: #e5e7eb;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.page-container {
+    max-width: 1200px;
+
+    margin: 30px auto;
+
+    padding: 0 20px;
+}
+
+
+.page-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+
+.page-heading h2 {
+    font-size: 28px;
+
+    margin-bottom: 5px;
+}
+
+
+.page-heading p {
+    color: #666;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.primary-btn {
+    background: #1e3a8a;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    font-size: 14px;
+}
+
+
+.primary-btn:hover {
+    background: #162d6b;
+}
+
+
+.full-width {
+    width: 100%;
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+#message {
+    margin-bottom: 15px;
+
+    color: #1e3a8a;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-box {
+    background: white;
+
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    border-radius: 8px;
+}
+
+
+.search-box input {
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    font-size: 15px;
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.table-container {
+    background: white;
+
+    border-radius: 8px;
+
+    overflow-x: auto;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 850px;
+}
+
+
+thead {
+    background: #1e3a8a;
+
+    color: white;
+}
+
+
+th,
+td {
+    padding: 14px;
+
+    text-align: left;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status-active {
+    color: #15803d;
+
+    font-weight: bold;
+}
+
+
+.status-inactive {
+    color: #dc2626;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   ACTION
+========================= */
+
+.action-btn {
+    border: none;
+
+    padding: 8px 12px;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    margin-right: 5px;
+
+    background: #1e3a8a;
+
+    color: white;
+}
+
+
+.action-btn:hover {
+    opacity: 0.9;
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+}
+
+
+.modal-content {
+    background: white;
+
+    width: 100%;
+
+    max-width: 500px;
+
+    padding: 25px;
+
+    border-radius: 10px;
+}
+
+
+.modal-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+
+.modal-header h2 {
+    font-size: 22px;
+}
+
+
+.close-btn {
+    background: none;
+
+    border: none;
+
+    font-size: 28px;
+
+    cursor: pointer;
+
+    color: #555;
+}
+
+
+.modal-content label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    margin-top: 15px;
+
+    font-weight: bold;
+}
+
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    font-size: 15px;
+}
+
+
+.modal-content textarea {
+    resize: vertical;
+
+    margin-bottom: 20px;
+}
+
+
+#formMessage {
+    margin-top: 15px;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+
+    .top-header {
+        padding: 15px;
+    }
+
+
+    .top-header h1 {
+        font-size: 19px;
+    }
+
+
+    .page-container {
+        margin-top: 20px;
+
+        padding: 0 15px;
+    }
+
+
+    .page-heading {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    .page-heading h2 {
+        font-size: 24px;
+    }
+
+
+    .primary-btn {
+        width: 100%;
+    }
+
+}
+
+/* Reliable, accessible admin logout button */
+.logout-btn,
+#logoutBtn,
+#logoutButton {
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.logout-btn:focus-visible,
+#logoutBtn:focus-visible,
+#logoutButton:focus-visible {
+    outline: 3px solid #fbbf24;
+    outline-offset: 3px;
+}
+
+.logout-btn:disabled,
+#logoutBtn:disabled,
+#logoutButton:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+
+
+/* Safe class deletion action */
+.delete-class-btn { margin-left: 6px; border: 1px solid #b91c1c; color: #b91c1c; background: #fff; }
+.delete-class-btn:hover { background: #fef2f2; }
+.delete-class-btn:disabled { opacity: .55; cursor: wait; }
+@media (max-width: 600px) { .delete-class-btn { margin: 6px 0 0; } }
+.back-dashboard-link { display: inline-block; color: #1e3a8a; font-size: .92rem; text-decoration: none; margin-top: 4px; }
+.back-dashboard-link:hover { text-decoration: underline; }

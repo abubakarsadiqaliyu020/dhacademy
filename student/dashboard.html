@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="dashboard.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <header class="top-header">
+
+        <div class="header-left">
+
+            <h1>
+                Development Hub LMS
+            </h1>
+
+            <p>
+                Student Portal
+            </p>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+            type="button"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main-container">
+
+
+        <!-- =========================
+             WELCOME
+        ========================== -->
+
+        <section class="welcome-section">
+
+            <div>
+
+                <span class="welcome-label">
+                    Student Dashboard
+                </span>
+
+
+                <h2 id="studentName">
+                    Welcome, Student
+                </h2>
+
+
+                <p>
+
+                    Student ID:
+
+                    <strong id="studentId">
+                        Loading...
+                    </strong>
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             MY CLASSES
+        ========================== -->
+
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        My Classes
+                    </h2>
+
+
+                    <p>
+                        Classes you are currently enrolled in.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="classesContainer"
+                class="classes-grid"
+            >
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+
+                    <p>
+                        Loading your classes...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             MY ASSIGNMENTS
+        ========================== -->
+
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        My Assignments
+                    </h2>
+
+
+                    <p>
+                        Assignments from your enrolled classes.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="assignmentsContainer"
+                class="assignments-container"
+            >
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+
+                    <p>
+                        Loading your assignments...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             MY RESULTS
+        ========================== -->
+
+        <section class="dashboard-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        My Results
+                    </h2>
+
+
+                    <p>
+                        Your marks and feedback.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="resultsContainer"
+                class="results-container"
+            >
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+
+                    <p>
+                        Loading your results...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             MESSAGE
+        ========================== -->
+
+        <p id="message"></p>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <script src="../js/supabase.js"></script>
+
+
+    <!-- Dashboard JavaScript -->
+
+    <script src="dashboard.js"></script>
+
+
+</body>
+
+</html>

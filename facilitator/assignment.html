@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Assignment - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link
+        rel="stylesheet"
+        href="assignment.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header class="top-header">
+
+        <div class="header-left">
+
+            <h1>
+                Development Hub LMS
+            </h1>
+
+            <p>
+                Facilitator Portal
+            </p>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+            type="button"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main-container">
+
+
+        <a
+            href="#"
+            id="backToModule"
+            class="back-link"
+        >
+            ← Back to Module
+        </a>
+
+
+
+        <!-- ASSIGNMENT INFORMATION -->
+
+        <section class="assignment-header">
+
+            <span class="assignment-label">
+                Assignment
+            </span>
+
+
+            <h2 id="assignmentTitle">
+                Loading assignment...
+            </h2>
+
+
+            <p id="assignmentInstructions">
+                Please wait while the assignment loads.
+            </p>
+
+
+            <div class="assignment-info">
+
+                <div class="info-item">
+
+                    <span>
+                        Total Questions
+                    </span>
+
+                    <strong id="questionCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span>
+                        Total Marks
+                    </span>
+
+                    <strong id="totalMarks">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span>
+                        Due Date
+                    </span>
+
+                    <strong id="dueDate">
+                        No due date
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- QUESTIONS -->
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Questions
+                    </h2>
+
+                    <p>
+                        Questions included in this assignment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="questionsContainer">
+
+                <div class="loading-box">
+
+                    <div class="loader"></div>
+
+                    <p>
+                        Loading questions...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- STUDENT SUBMISSIONS -->
+
+        <section class="content-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Student Submissions
+                    </h2>
+
+                    <p>
+                        Students who have submitted this assignment.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="submissionsMessage"
+                class="message"
+            ></div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                S/N
+                            </th>
+
+                            <th>
+                                Student ID
+                            </th>
+
+                            <th>
+                                Student Name
+                            </th>
+
+                            <th>
+                                Submitted
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="submissionsTable">
+
+                        <tr>
+
+                            <td colspan="7">
+                                Loading submissions...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+
+
+    <!-- SUPABASE -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+
+    <script src="../js/supabase.js"></script>
+
+
+    <script src="assignment.js"></script>
+
+
+</body>
+
+</html>

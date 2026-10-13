@@ -1,0 +1,464 @@
+* {
+  box-sizing: border-box;
+  }
+
+body {
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+background: #f5f7fb;
+color: #222;
+}
+
+/* =========================================================
+HEADER
+========================================================= */
+
+.top-header {
+background: #1e3a8a;
+color: white;
+padding: 18px 35px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 20px;
+}
+
+.header-left h1 {
+margin: 0;
+font-size: 22px;
+}
+
+.header-left p {
+margin: 5px 0 0;
+font-size: 14px;
+opacity: 0.9;
+}
+
+.logout-btn {
+border: none;
+background: white;
+color: #1e3a8a;
+padding: 10px 18px;
+border-radius: 6px;
+font-size: 14px;
+font-weight: bold;
+cursor: pointer;
+}
+
+.logout-btn:hover {
+background: #eef2ff;
+}
+
+.logout-btn:disabled {
+opacity: 0.7;
+cursor: not-allowed;
+}
+
+/* =========================================================
+MAIN CONTAINER
+========================================================= */
+
+.main-container {
+width: 92%;
+max-width: 1100px;
+margin: 30px auto 60px;
+}
+
+/* =========================================================
+BACK LINK
+========================================================= */
+
+.back-link {
+display: inline-block;
+margin-bottom: 20px;
+color: #1e3a8a;
+text-decoration: none;
+font-size: 15px;
+font-weight: bold;
+}
+
+.back-link:hover {
+text-decoration: underline;
+}
+
+/* =========================================================
+MODULE HEADER
+========================================================= */
+
+.module-header {
+background: white;
+border-radius: 10px;
+padding: 28px;
+margin-bottom: 25px;
+border: 1px solid #e5e7eb;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.module-label {
+display: inline-block;
+background: #eef2ff;
+color: #1e3a8a;
+padding: 6px 10px;
+border-radius: 5px;
+font-size: 12px;
+font-weight: bold;
+margin-bottom: 12px;
+}
+
+.module-header h2 {
+margin: 0 0 10px;
+font-size: 28px;
+color: #111827;
+}
+
+.module-header p {
+margin: 0;
+color: #6b7280;
+font-size: 15px;
+line-height: 1.6;
+}
+
+/* =========================================================
+CONTENT SECTION
+========================================================= */
+
+.content-section {
+background: white;
+border-radius: 10px;
+padding: 25px;
+margin-bottom: 25px;
+border: 1px solid #e5e7eb;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.section-heading {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+border-bottom: 1px solid #e5e7eb;
+padding-bottom: 15px;
+}
+
+.section-heading h2 {
+margin: 0;
+font-size: 21px;
+color: #1e3a8a;
+}
+
+.section-heading p {
+margin: 5px 0 0;
+color: #6b7280;
+font-size: 14px;
+}
+
+/* =========================================================
+LOADING
+========================================================= */
+
+.loading-box {
+text-align: center;
+padding: 40px 20px;
+color: #6b7280;
+}
+
+.loader {
+width: 30px;
+height: 30px;
+margin: 0 auto 12px;
+border: 3px solid #e5e7eb;
+border-top-color: #1e3a8a;
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+to {
+transform: rotate(360deg);
+}
+}
+
+/* =========================================================
+MATERIAL CARD
+========================================================= */
+
+.material-card {
+border: 1px solid #e5e7eb;
+border-radius: 9px;
+margin-bottom: 20px;
+overflow: hidden;
+background: white;
+}
+
+.material-card:last-child {
+margin-bottom: 0;
+}
+
+.material-card > h3 {
+margin: 0;
+padding: 16px 20px;
+background: #f8fafc;
+color: #1e3a8a;
+font-size: 19px;
+border-bottom: 1px solid #e5e7eb;
+}
+
+.material-description {
+margin: 0;
+padding: 15px 20px 0;
+color: #6b7280;
+font-size: 14px;
+line-height: 1.6;
+}
+
+/* =========================================================
+LESSON CONTENT
+========================================================= */
+
+.lesson-content {
+padding: 22px;
+font-size: 16px;
+line-height: 1.75;
+color: #374151;
+}
+
+.lesson-content p {
+margin: 0 0 16px;
+}
+
+.lesson-content p:last-child {
+margin-bottom: 0;
+}
+
+.lesson-content h2 {
+color: #1e3a8a;
+font-size: 24px;
+margin: 25px 0 12px;
+}
+
+.lesson-content h3 {
+color: #1e3a8a;
+font-size: 21px;
+margin: 23px 0 10px;
+}
+
+.lesson-content h4 {
+color: #1e3a8a;
+font-size: 18px;
+margin: 20px 0 8px;
+}
+
+.lesson-content strong {
+color: #111827;
+}
+
+.lesson-text {
+margin-bottom: 5px;
+}
+
+/* =========================================================
+CODE BLOCK
+========================================================= */
+
+.code-block {
+margin: 20px 0;
+border-radius: 8px;
+overflow: hidden;
+background: #272822;
+border: 1px solid #1f2937;
+}
+
+.code-header {
+background: #1f2937;
+color: white;
+padding: 9px 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+}
+
+.code-language {
+font-size: 13px;
+font-weight: bold;
+text-transform: uppercase;
+letter-spacing: 0.4px;
+}
+
+.copy-code-btn {
+background: #1e3a8a;
+color: white;
+border: none;
+padding: 7px 12px;
+border-radius: 5px;
+font-size: 12px;
+cursor: pointer;
+}
+
+.copy-code-btn:hover {
+opacity: 0.9;
+}
+
+.copy-code-btn:disabled {
+opacity: 0.8;
+}
+
+.code-block pre {
+margin: 0;
+padding: 18px;
+overflow-x: auto;
+font-size: 14px;
+line-height: 1.6;
+color: #f8fafc;
+white-space: pre;
+}
+
+.code-block code {
+font-family: Consolas, "Courier New", monospace;
+color: #f8fafc;
+}
+
+/* =========================================================
+EMPTY MESSAGE
+========================================================= */
+
+.empty-message {
+padding: 35px 20px;
+text-align: center;
+color: #6b7280;
+background: #f8fafc;
+border-radius: 8px;
+border: 1px dashed #d1d5db;
+}
+
+/* =========================================================
+ERROR MESSAGE
+========================================================= */
+
+.error-message {
+padding: 18px;
+background: #fef2f2;
+color: #b91c1c;
+border: 1px solid #fecaca;
+border-radius: 8px;
+line-height: 1.6;
+}
+
+.error-message small {
+display: block;
+margin-top: 8px;
+color: #7f1d1d;
+word-break: break-word;
+}
+
+/* =========================================================
+ASSIGNMENTS
+========================================================= */
+
+.assignment-card {
+border: 1px solid #e5e7eb;
+border-radius: 9px;
+padding: 20px;
+margin-bottom: 15px;
+background: white;
+}
+
+.assignment-card:last-child {
+margin-bottom: 0;
+}
+
+.assignment-card h3 {
+margin: 0 0 12px;
+color: #1e3a8a;
+font-size: 18px;
+}
+
+.assignment-instructions {
+color: #374151;
+line-height: 1.6;
+margin-bottom: 15px;
+}
+
+.assignment-info {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+margin-bottom: 15px;
+font-size: 13px;
+color: #6b7280;
+}
+
+.assignment-btn {
+border: none;
+background: #1e3a8a;
+color: white;
+padding: 10px 16px;
+border-radius: 6px;
+cursor: pointer;
+font-size: 14px;
+}
+
+.assignment-btn:hover {
+opacity: 0.9;
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+.top-header {
+    padding: 15px 18px;
+}
+
+.header-left h1 {
+    font-size: 18px;
+}
+
+.header-left p {
+    font-size: 12px;
+}
+
+.logout-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.main-container {
+    width: 94%;
+    margin-top: 20px;
+}
+
+.module-header {
+    padding: 20px;
+}
+
+.module-header h2 {
+    font-size: 23px;
+}
+
+.content-section {
+    padding: 18px;
+}
+
+.lesson-content {
+    padding: 16px;
+    font-size: 15px;
+}
+
+.code-block pre {
+    padding: 14px;
+    font-size: 13px;
+}
+
+.code-header {
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.copy-code-btn {
+    width: 100%;
+}
+
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Assignment - Development Hub LMS</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="assignment.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         TOP BAR
+    ========================== -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1>Development Hub LMS</h1>
+
+            <p>Student Portal</p>
+
+        </div>
+
+
+        <button id="logoutBtn">
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="container">
+
+
+        <!-- Back to Module -->
+
+        <a
+            href="#"
+            id="backToModule"
+            class="back-link"
+        >
+            ← Back to Module
+        </a>
+
+
+
+        <!-- =========================
+             ASSIGNMENT INFORMATION
+        ========================== -->
+
+        <section class="assignment-header">
+
+            <h2 id="assignmentTitle">
+                Assignment
+            </h2>
+
+
+            <p id="assignmentInstructions">
+                Loading assignment...
+            </p>
+
+
+
+            <div class="assignment-info">
+
+
+                <div class="info-box">
+
+                    <strong>
+                        Total Questions
+                    </strong>
+
+                    <span id="totalQuestions">
+                        0
+                    </span>
+
+                </div>
+
+
+
+                <div class="info-box">
+
+                    <strong>
+                        Total Marks
+                    </strong>
+
+                    <span id="totalMarks">
+                        0
+                    </span>
+
+                </div>
+
+
+
+                <div class="info-box">
+
+                    <strong>
+                        Due Date
+                    </strong>
+
+                    <span id="dueDate">
+                        -
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             SUBMISSION STATUS
+        ========================== -->
+
+        <section class="status-section">
+
+            <h3>
+                Submission Status
+            </h3>
+
+
+            <div
+                id="submissionStatus"
+                class="status-badge not-submitted"
+            >
+                Not Submitted
+            </div>
+
+
+            <p id="submissionDate"></p>
+
+        </section>
+
+
+
+        <!-- =========================
+             ASSIGNMENT RESULT
+        ========================== -->
+
+        <section
+            id="resultSection"
+            class="result-section hidden"
+        >
+
+            <h3>
+                Assignment Result
+            </h3>
+
+
+
+            <div class="result-grid">
+
+
+                <div class="result-box">
+
+                    <span>
+                        Score
+                    </span>
+
+                    <strong id="resultScore">
+                        0 / 0
+                    </strong>
+
+                </div>
+
+
+
+                <div class="result-box">
+
+                    <span>
+                        Percentage
+                    </span>
+
+                    <strong id="resultPercentage">
+                        0%
+                    </strong>
+
+                </div>
+
+
+
+                <div class="result-box">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong id="resultStatus">
+                        Marked
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Overall Feedback -->
+
+            <div class="overall-feedback">
+
+                <h4>
+                    Facilitator Feedback
+                </h4>
+
+
+                <p id="overallFeedback">
+                    No overall feedback provided.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             QUESTIONS
+        ========================== -->
+
+        <section class="questions-section">
+
+            <h3>
+                Questions
+            </h3>
+
+
+            <p class="instruction">
+                Answer all questions before submitting the assignment.
+            </p>
+
+
+            <div id="questionsContainer">
+
+                <p>
+                    Loading questions...
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 SUBMIT AREA
+            ========================== -->
+
+            <div
+                id="submitSection"
+                class="submit-section"
+            >
+
+                <button
+                    type="button"
+                    id="submitAssignmentBtn"
+                    class="submit-btn"
+                >
+                    Submit Assignment
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             MESSAGE
+        ========================== -->
+
+        <p id="message"></p>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         SUPABASE
+    ========================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script src="assignment.js"></script>
+
+
+</body>
+
+</html>

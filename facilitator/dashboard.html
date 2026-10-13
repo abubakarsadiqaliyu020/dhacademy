@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Facilitator Dashboard - Development Hub LMS
+    </title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link
+        rel="stylesheet"
+        href="dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header class="top-header">
+
+        <div>
+
+            <h1>
+                Development Hub LMS
+            </h1>
+
+            <p>
+                Facilitator Portal
+            </p>
+
+        </div>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <main class="page-container">
+
+
+        <section class="welcome-section">
+
+            <h2 id="welcomeMessage">
+                Welcome, Facilitator
+            </h2>
+
+            <p id="facilitatorInfo">
+                Login ID: Loading...
+            </p>
+
+        </section>
+
+
+
+        <section class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        My Classes
+                    </h2>
+
+                    <p>
+                        Classes assigned to you.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="classesContainer"
+                class="class-grid"
+            >
+
+                <div class="loading-card">
+
+                    Loading classes...
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="../js/supabase.js"></script>
+
+    <script src="dashboard.js"></script>
+
+</body>
+
+</html>
