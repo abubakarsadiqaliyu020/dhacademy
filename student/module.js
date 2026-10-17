@@ -235,6 +235,9 @@ async function loadMaterials() {
             .join("");
 
 
+    // IMAGE SUPPORT (3/3): swap stored image paths for fresh, short-lived signed URLs.
+    if (window.LessonImages) window.LessonImages.hydrate(container);
+
     attachCopyButtons();
     if (window.hljs) document.querySelectorAll(".lesson-content pre code").forEach(block => window.hljs.highlightElement(block));
 }
@@ -286,9 +289,12 @@ function renderMaterial(material) {
 
 function renderLessonContent(content) {
     // New lessons are stored as sanitized HTML; older lessons continue using the legacy text/Markdown renderer.
-    if (/<(p|div|h[1-6]|table|ul|ol|pre|blockquote)\b/i.test(content || "")) {
+    // IMAGE SUPPORT (1/3): "img" added so image-only lessons are treated as HTML, not escaped as text.
+    if (/<(p|div|h[1-6]|table|ul|ol|pre|blockquote|img)\b/i.test(content || "")) {
+        // IMAGE SUPPORT (2/3): allow <img> with only the approved data-lr-* attributes.
+        // The hook in lesson-images.js removes any image that is not a valid lesson-images/ path.
         const safeHtml = window.DOMPurify
-            ? DOMPurify.sanitize(content, {ALLOWED_TAGS:["p","br","div","span","b","strong","i","em","u","s","strike","h1","h2","h3","h4","ul","ol","li","table","thead","tbody","tr","th","td","pre","code","blockquote"], ALLOWED_ATTR:["style","colspan","rowspan","class"]})
+            ? DOMPurify.sanitize(content, {ALLOWED_TAGS:["p","br","div","span","b","strong","i","em","u","s","strike","h1","h2","h3","h4","ul","ol","li","table","thead","tbody","tr","th","td","pre","code","blockquote"].concat(window.LessonImages ? LessonImages.ALLOWED_TAGS : []), ALLOWED_ATTR:["style","colspan","rowspan","class"].concat(window.LessonImages ? LessonImages.ALLOWED_ATTR : [])})
             : escapeHtml(content);
         const parsed = new DOMParser().parseFromString(safeHtml, "text/html");
         parsed.querySelectorAll(".lesson-code-block").forEach(block => {

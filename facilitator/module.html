@@ -314,7 +314,19 @@
                     <button type="button" class="editor-tool-btn" id="addTableColumnBtn">Add column</button>
                     <button type="button" class="editor-tool-btn" id="deleteTableColumnBtn">Delete column</button>
                     <button type="button" class="editor-tool-btn" id="insertLessonCodeBtn">Insert code</button>
+                    <button type="button" class="editor-tool-btn" id="insertLessonImageBtn">Insert Image</button>
+                    <input type="file" id="lessonImageInput" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
                     <button type="button" class="editor-tool-btn" id="previewLessonBtn">Preview</button>
+                </div>
+                <p id="lessonImageStatus" class="lesson-image-status" role="status" aria-live="polite"></p>
+                <div id="lessonImagePanel" class="lesson-image-panel" hidden>
+                    <strong>Selected image</strong>
+                    <label>Alternative text
+                        <input type="text" id="lessonImageAlt" maxlength="300" placeholder="Describe the image for students who cannot see it">
+                    </label>
+                    <label>Size <input type="range" id="lessonImageWidth" min="10" max="100" step="5" value="100"> <span id="lessonImageWidthLabel">100%</span></label>
+                    <button type="button" class="editor-tool-btn" id="lessonImageRemoveBtn">Remove image</button>
+                    <button type="button" class="editor-tool-btn" id="lessonImageDoneBtn">Done</button>
                 </div>
                 <div id="materialContent" class="lesson-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Lesson content" data-placeholder="Write lesson notes here. Paste content from Microsoft Word, add tables, and insert code blocks."></div>
                 <div id="lessonPreviewPanel" class="lesson-preview-panel" hidden>
@@ -647,6 +659,7 @@
 
 <script src="../js/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="../js/lesson-images.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
 <script src="module.js"></script>
 

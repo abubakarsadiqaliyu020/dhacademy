@@ -331,6 +331,30 @@ border-radius: 8px;
 border: 1px dashed #d1d5db;
 }
 
+/* Student lesson images — add after module.css */
+.lesson-content img,
+.lesson-content .lesson-image {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    border-radius: 4px;
+}
+
+.lesson-image-unavailable {
+    display: inline-block;
+    padding: 10px 14px;
+    border: 1px dashed #d1d5db;
+    border-radius: 6px;
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.lesson-content { overflow-wrap: anywhere; }
+
+
+
 /* =========================================================
 ERROR MESSAGE
 ========================================================= */

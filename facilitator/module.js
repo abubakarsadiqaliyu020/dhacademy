@@ -111,6 +111,10 @@ let questions = [];
 let editingMaterialId = null;
 let assignmentFormDirty = false;
 let assignmentFormOpening = false;
+let materialSaving = false;
+let imageUploadInFlight = false;
+let savedEditorRange = null;
+let selectedEditorImage = null;
 
 
 /* ========================================
@@ -205,11 +209,14 @@ function setupLessonEditorToolbar() {
             previewButton.textContent = "Preview";
         } else {
             content.innerHTML = sanitizeLessonHtml(editor.innerHTML);
+            window.LessonImages?.hydrate(content);
             panel.hidden = false;
             previewButton.textContent = "Hide Preview";
             panel.scrollIntoView({behavior: "smooth", block: "nearest"});
         }
     });
+
+    setupImageInsertion(editor);
 
     editor.addEventListener("paste", event => {
         event.preventDefault();
@@ -221,6 +228,187 @@ function setupLessonEditorToolbar() {
             insertEditorHtml(escapeHtml(plain).replace(/\r?\n/g, "<br>"));
         }
     });
+}
+
+/* ========================================
+   INSERT IMAGE
+   Images are uploaded to the private "learning-resources" bucket.
+   Only a stable Storage path (data-lr-path) is saved in
+   resources.content; signed URLs are requested on display.
+======================================== */
+
+function setImageStatus(message, kind) {
+    const el = document.getElementById("lessonImageStatus");
+    if (!el) return;
+    el.textContent = message || "";
+    el.className = "lesson-image-status" + (kind ? " " + kind : "");
+}
+
+function setupImageInsertion(editor) {
+    const button = document.getElementById("insertLessonImageBtn");
+    const fileInput = document.getElementById("lessonImageInput");
+    const panel = document.getElementById("lessonImagePanel");
+    const altInput = document.getElementById("lessonImageAlt");
+    const widthInput = document.getElementById("lessonImageWidth");
+    const widthLabel = document.getElementById("lessonImageWidthLabel");
+    if (!button || !fileInput || !window.LessonImages) return;
+
+    // Remember the last caret position inside the editor, because opening
+    // the file dialog moves focus away from it.
+    document.addEventListener("selectionchange", () => {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            if (editor.contains(range.commonAncestorContainer)) {
+                savedEditorRange = range.cloneRange();
+            }
+        }
+    });
+
+    button.addEventListener("click", () => {
+        if (imageUploadInFlight) return;
+        if (!currentModule || !currentClassId) {
+            setImageStatus("Module information is not loaded yet. Please wait and try again.", "error");
+            return;
+        }
+        fileInput.value = "";
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async () => {
+        const file = fileInput.files && fileInput.files[0];
+        fileInput.value = "";
+        if (file) await handleImageSelected(file, editor, button);
+    });
+
+    // Select an image to edit alt text / size
+    editor.addEventListener("click", event => {
+        const img = event.target;
+        if (img && img.tagName === "IMG" && img.hasAttribute("data-lr-path")) {
+            selectEditorImage(img);
+        } else {
+            deselectEditorImage();
+        }
+    });
+
+    function selectEditorImage(img) {
+        deselectEditorImage();
+        selectedEditorImage = img;
+        img.classList.add("lesson-image-selected");
+        altInput.value = img.getAttribute("alt") || "";
+        const w = LessonImages.cleanWidth(img.getAttribute("data-lr-width")) || 100;
+        widthInput.value = w;
+        widthLabel.textContent = w + "%";
+        panel.hidden = false;
+    }
+
+    function deselectEditorImage() {
+        if (selectedEditorImage) selectedEditorImage.classList.remove("lesson-image-selected");
+        selectedEditorImage = null;
+        panel.hidden = true;
+    }
+
+    window.selectEditorImage = selectEditorImage;
+    window.deselectEditorImage = deselectEditorImage;
+
+    altInput.addEventListener("input", () => {
+        if (selectedEditorImage) selectedEditorImage.setAttribute("alt", LessonImages.cleanAlt(altInput.value));
+    });
+
+    widthInput.addEventListener("input", () => {
+        if (!selectedEditorImage) return;
+        const w = LessonImages.cleanWidth(widthInput.value) || 100;
+        widthLabel.textContent = w + "%";
+        selectedEditorImage.setAttribute("data-lr-width", String(w));
+        LessonImages.applyWidth(selectedEditorImage);   // height:auto keeps proportions
+    });
+
+    document.getElementById("lessonImageRemoveBtn")?.addEventListener("click", () => {
+        if (selectedEditorImage) selectedEditorImage.remove();
+        deselectEditorImage();
+        setImageStatus("Image removed from the lesson.", "");
+    });
+
+    document.getElementById("lessonImageDoneBtn")?.addEventListener("click", () => {
+        deselectEditorImage();
+        editor.focus();
+    });
+}
+
+async function handleImageSelected(file, editor, button) {
+    if (imageUploadInFlight) return;          // prevents duplicate uploads / insertions
+    imageUploadInFlight = true;
+    button.disabled = true;
+
+    try {
+        setImageStatus("Checking image...", "");
+        const validated = await LessonImages.validateFile(file);
+        if (!validated.ok) {
+            setImageStatus(validated.message, "error");
+            return;
+        }
+
+        if (!navigator.onLine) {
+            setImageStatus("You appear to be offline. Please reconnect and try again.", "error");
+            return;
+        }
+
+        setImageStatus("Uploading image...", "");
+        const { path } = await LessonImages.uploadImage(file, validated, currentClassId, currentModule.id);
+
+        const img = document.createElement("img");
+        img.setAttribute("data-lr-path", path);
+        img.setAttribute("alt", "");
+        img.className = "lesson-image";
+
+        insertImageNode(img, editor);
+        await LessonImages.hydrate(img, { editor: true });
+
+        selectEditorImage(img);
+        document.getElementById("lessonImageAlt")?.focus();
+        setImageStatus("Image uploaded and inserted. Add alternative text below, then save the lesson.", "success");
+
+    } catch (error) {
+        console.error("Insert image error:", error);
+        setImageStatus(error && error.message ? error.message : "The image could not be inserted.", "error");
+    } finally {
+        imageUploadInFlight = false;
+        button.disabled = false;
+    }
+}
+
+function insertImageNode(img, editor) {
+    editor.focus();
+    const selection = window.getSelection();
+
+    if (savedEditorRange && editor.contains(savedEditorRange.commonAncestorContainer)) {
+        // Insert at the caret (collapse to the end so selected text is not deleted).
+        const range = savedEditorRange.cloneRange();
+        range.collapse(false);
+        range.insertNode(img);
+    } else {
+        // Fallback: cursor was never in the editor, so add the image at the end.
+        editor.appendChild(img);
+    }
+
+    // Always leave somewhere to keep typing after the image.
+    if (img.parentNode === editor && !img.nextSibling) {
+        const p = document.createElement("p");
+        p.appendChild(document.createElement("br"));
+        editor.appendChild(p);
+        const r = document.createRange();
+        r.setStart(p, 0);
+        r.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(r);
+    } else {
+        const r = document.createRange();
+        r.setStartAfter(img);
+        r.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(r);
+    }
+    savedEditorRange = selection.rangeCount ? selection.getRangeAt(0).cloneRange() : null;
 }
 
 function insertEditorHtml(html) {
@@ -282,14 +470,14 @@ function editSelectedTable(action) {
 
 function sanitizeLessonHtml(html) {
     if (window.DOMPurify) return DOMPurify.sanitize(html, {
-        ALLOWED_TAGS: ["p","br","div","span","b","strong","i","em","u","s","strike","h1","h2","h3","h4","ul","ol","li","table","thead","tbody","tr","th","td","pre","code","blockquote"],
-        ALLOWED_ATTR: ["style","colspan","rowspan","class"]
+        ALLOWED_TAGS: ["p","br","div","span","b","strong","i","em","u","s","strike","h1","h2","h3","h4","ul","ol","li","table","thead","tbody","tr","th","td","pre","code","blockquote"].concat(window.LessonImages ? LessonImages.ALLOWED_TAGS : []),
+        ALLOWED_ATTR: ["style","colspan","rowspan","class"].concat(window.LessonImages ? LessonImages.ALLOWED_ATTR : [])
     });
     return escapeHtml(html).replace(/\n/g, "<br>");
 }
 
 function legacyContentToHtml(content) {
-    if (/<(p|div|h[1-6]|table|ul|ol|pre|blockquote)\b/i.test(content)) return sanitizeLessonHtml(content);
+    if (/<(p|div|h[1-6]|table|ul|ol|pre|blockquote|img)\b/i.test(content)) return sanitizeLessonHtml(content);
     const escaped = escapeHtml(content || "");
     return escaped.replace(/```([\w+#.-]*)\n?([\s\S]*?)```/g, (_, lang, code) => `<div class="lesson-code-block"><div class="lesson-code-language">${escapeHtml(lang || "text")}</div><pre><code class="language-${escapeHtml((lang || "text").toLowerCase())}">${code}</code></pre></div>`).replace(/\n/g, "<br>");
 }
@@ -657,6 +845,8 @@ async function loadMaterials(
                 card
             );
 
+            window.LessonImages?.hydrate(card);
+
         }
     );
 
@@ -678,7 +868,7 @@ function formatLessonContent(
         return "";
     }
 
-    if (/<(p|div|h[1-6]|table|ul|ol|pre|blockquote)\b/i.test(content)) {
+    if (/<(p|div|h[1-6]|table|ul|ol|pre|blockquote|img)\b/i.test(content)) {
         return sanitizeLessonHtml(content);
     }
 
@@ -863,6 +1053,9 @@ function attachMaterialButtons() {
             materialDescription.value = data.description || "";
             materialLanguage.value = data.language || "text";
             materialContent.innerHTML = legacyContentToHtml(data.content || "");
+            window.deselectEditorImage?.();
+            setImageStatus("", "");
+            window.LessonImages?.hydrate(materialContent, { editor: true });
             materialMessage.textContent = "Editing saved material. Save to update it.";
             document.querySelector("#materialModal .modal-header h2").textContent = "Edit Learning Material";
             document.querySelector("#materialForm button[type=submit]").textContent = "Save Changes";
@@ -914,6 +1107,9 @@ addMaterialBtn.addEventListener(
         materialForm.reset();
         editingMaterialId = null;
         materialContent.innerHTML = "";
+        savedEditorRange = null;
+        window.deselectEditorImage?.();
+        setImageStatus("", "");
         document.querySelector("#materialModal .modal-header h2").textContent = "Add Learning Material";
         document.querySelector("#materialForm button[type=submit]").textContent = "Save Learning Material";
         document.getElementById("lessonPreviewPanel").hidden = true;
@@ -951,6 +1147,9 @@ cancelMaterialBtn.addEventListener(
 function closeMaterialForm() {
     materialModal.classList.remove("show");
     editingMaterialId = null;
+    savedEditorRange = null;
+    window.deselectEditorImage?.();
+    setImageStatus("", "");
     document.getElementById("lessonPreviewPanel").hidden = true;
 }
 
@@ -964,6 +1163,20 @@ materialForm.addEventListener(
     async function (event) {
 
         event.preventDefault();
+
+
+        if (materialSaving) {
+            return;
+        }
+
+
+        if (imageUploadInFlight) {
+
+            materialMessage.textContent =
+                "Please wait for the image upload to finish before saving.";
+
+            return;
+        }
 
 
         if (!currentModule) {
@@ -1013,6 +1226,23 @@ materialForm.addEventListener(
             "Saving learning material...";
 
 
+        materialSaving = true;
+
+        const materialSubmitBtn =
+            materialForm.querySelector("button[type=submit]");
+
+        if (materialSubmitBtn) {
+            materialSubmitBtn.disabled = true;
+        }
+
+        function endMaterialSaving() {
+            materialSaving = false;
+            if (materialSubmitBtn) {
+                materialSubmitBtn.disabled = false;
+            }
+        }
+
+
         try {
 
             const materialPayload = {
@@ -1041,6 +1271,8 @@ materialForm.addEventListener(
                 materialMessage.textContent =
                     "Unable to save learning material.";
 
+                endMaterialSaving();
+
                 return;
             }
 
@@ -1060,6 +1292,8 @@ materialForm.addEventListener(
 
                     closeMaterialForm();
 
+                    endMaterialSaving();
+
                     await loadMaterials(
                         currentModule.id
                     );
@@ -1078,6 +1312,8 @@ materialForm.addEventListener(
 
             materialMessage.textContent =
                 "Something went wrong.";
+
+            endMaterialSaving();
 
         }
 
