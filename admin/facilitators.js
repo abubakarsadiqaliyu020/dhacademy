@@ -217,6 +217,14 @@ function displayFacilitators(list) {
             <td>
 
                 <button
+                    type="button"
+                    class="action-btn edit-btn"
+                    onclick="openEditFacilitator('${facilitator.id}', this)"
+                >
+                    Edit
+                </button>
+
+                <button
                     class="action-btn reset-btn"
                     onclick="openResetPin(
                         '${facilitator.id}',
@@ -806,6 +814,442 @@ logoutBtn.addEventListener(
         }
     }
 );
+
+
+/* =========================
+   EDIT FACILITATOR (correct name, Login ID, phone)
+   Admin-only page. The database policy on "profiles" is what really
+   restricts who may change these fields.
+========================= */
+const editFacilitatorModal =
+    document.getElementById("editFacilitatorModal");
+const editFacilitatorForm =
+    document.getElementById("editFacilitatorForm");
+const closeEditModal =
+    document.getElementById("closeEditModal");
+const editFullName =
+    document.getElementById("editFullName");
+const editFacilitatorLoginId =
+    document.getElementById("editFacilitatorLoginId");
+const editPhone =
+    document.getElementById("editPhone");
+const editIdWarning =
+    document.getElementById("editIdWarning");
+const editMessage =
+    document.getElementById("editMessage");
+const saveEditBtn =
+    document.getElementById("saveEditBtn");
+
+let editingFacilitator = null;
+let editReturnFocus = null;
+
+
+function showPageMessage(text, isError) {
+    message.textContent = text;
+    message.className =
+        isError
+            ? "error-message"
+            : "success-message";
+}
+
+
+function openEditFacilitator(facilitatorId, trigger) {
+
+    const facilitator =
+        facilitators.find(
+            function (item) {
+                return item.id === facilitatorId;
+            }
+        );
+
+    if (!facilitator) {
+        showPageMessage(
+            "Facilitator not found. Please refresh the page.",
+            true
+        );
+        return;
+    }
+
+    editingFacilitator = facilitator;
+    editReturnFocus = trigger || null;
+
+    editFullName.value = facilitator.full_name || "";
+    editFacilitatorLoginId.value = facilitator.student_id || "";
+    editPhone.value = facilitator.phone || "";
+    editIdWarning.hidden = true;
+    editMessage.textContent = "";
+    saveEditBtn.disabled = false;
+    saveEditBtn.textContent = "Save Changes";
+
+    editFacilitatorModal.classList.add("show");
+    editFullName.focus();
+}
+
+
+function closeEditFacilitator() {
+
+    editFacilitatorModal.classList.remove("show");
+    editingFacilitator = null;
+
+    if (editReturnFocus && editReturnFocus.focus) {
+        editReturnFocus.focus();
+    }
+}
+
+
+editFacilitatorLoginId.addEventListener(
+    "input",
+    function () {
+        editIdWarning.hidden =
+            !editingFacilitator ||
+            editFacilitatorLoginId.value.trim() ===
+                (editingFacilitator.student_id || "");
+    }
+);
+
+closeEditModal.addEventListener("click", closeEditFacilitator);
+
+editFacilitatorModal.addEventListener(
+    "click",
+    function (event) {
+        if (event.target === editFacilitatorModal) {
+            closeEditFacilitator();
+        }
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+        if (
+            event.key === "Escape" &&
+            editFacilitatorModal.classList.contains("show")
+        ) {
+            closeEditFacilitator();
+        }
+    }
+);
+
+
+// Looks up the hidden login email for a Login ID (the same function the
+// login page uses). Returns {email} or {error}.
+async function lookupLoginEmail(loginId) {
+
+    const { data, error } =
+        await supabaseClient.rpc(
+            "get_login_email",
+            {
+                student_id_input: loginId
+            }
+        );
+
+    if (error) {
+        console.error("Login lookup error:", error);
+        return { error: error };
+    }
+
+    return { email: data || null };
+}
+
+
+// Turns a database error into something the admin can act on.
+function describeSaveError(error) {
+
+    if (error && error.code === "23505") {
+        return "That Login ID is already used by another account.";
+    }
+
+    // Messages raised on purpose by a database rule (trigger/policy)
+    if (
+        error &&
+        (error.code === "P0001" || error.code === "42501") &&
+        error.message
+    ) {
+        return error.message;
+    }
+
+    return "You may not have permission, or the facilitator no longer exists.";
+}
+
+
+async function saveFacilitatorUpdate(id, fields) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("profiles")
+            .update(fields)
+            .eq("id", id)
+            .eq("role", "facilitator")
+            .select("id, student_id, full_name, phone");
+
+    if (error || !data || data.length !== 1) {
+        return { error: error || new Error("No row updated") };
+    }
+
+    return { row: data[0] };
+}
+
+
+editFacilitatorForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        if (!editingFacilitator) {
+            return;
+        }
+
+        const facilitator = editingFacilitator;
+
+        const fullName =
+            editFullName.value.replace(/\s+/g, " ").trim();
+        const newId =
+            editFacilitatorLoginId.value.trim();
+        const phone =
+            editPhone.value.trim();
+
+        const oldId = facilitator.student_id || "";
+
+        const changes = {};
+
+        if (fullName !== (facilitator.full_name || "")) {
+            changes.full_name = fullName;
+        }
+
+        if (newId !== oldId) {
+            changes.student_id = newId;
+        }
+
+        if (phone !== (facilitator.phone || "")) {
+            changes.phone = phone || null;
+        }
+
+        // ----- validation (ID and phone only when they are being changed) -----
+        if (!fullName) {
+            editMessage.textContent = "Full name cannot be empty.";
+            return;
+        }
+
+        if (!newId) {
+            editMessage.textContent = "Login ID cannot be empty.";
+            return;
+        }
+
+        if (
+            "student_id" in changes &&
+            /\s/.test(newId)
+        ) {
+            editMessage.textContent =
+                "Login ID cannot contain spaces.";
+            return;
+        }
+
+        if (
+            "phone" in changes &&
+            phone &&
+            !/^[0-9+()\-\s]{1,20}$/.test(phone)
+        ) {
+            editMessage.textContent =
+                "Phone number may only contain digits, spaces, + ( ) and -.";
+            return;
+        }
+
+        if (Object.keys(changes).length === 0) {
+            editMessage.textContent = "No changes to save.";
+            return;
+        }
+
+        saveEditBtn.disabled = true;
+        saveEditBtn.textContent = "Saving...";
+        editMessage.textContent = "";
+
+        let oldEmail = null;
+
+        try {
+
+            if ("student_id" in changes) {
+
+                // 1. The new ID must not belong to anyone else
+                //    (login lookup covers every account type).
+                const pattern =
+                    newId.replace(/[\\%_]/g, "\\$&");
+
+                const taken =
+                    await supabaseClient
+                        .from("profiles")
+                        .select("id")
+                        .ilike("student_id", pattern)
+                        .neq("id", facilitator.id)
+                        .limit(1);
+
+                if (taken.error) {
+                    console.error("ID check error:", taken.error);
+                    editMessage.textContent =
+                        "Could not check whether that ID is already used. Nothing was changed.";
+                    return;
+                }
+
+                if (taken.data && taken.data.length > 0) {
+                    editMessage.textContent =
+                        "That Login ID is already used by another account.";
+                    return;
+                }
+
+                // 2. Remember which login account the OLD ID reaches,
+                //    so we can prove the NEW ID still reaches it.
+                const before = await lookupLoginEmail(oldId);
+
+                if (before.error || !before.email) {
+                    editMessage.textContent =
+                        "Could not verify this facilitator's login link, so the Login ID was not changed.";
+                    return;
+                }
+
+                oldEmail = before.email;
+
+                if (
+                    !window.confirm(
+                        "Change this facilitator's ID from " + oldId +
+                        " to " + newId + "?\n\n" +
+                        "From now on they must log in with the new ID. " +
+                        "Their password stays the same."
+                    )
+                ) {
+                    return;
+                }
+            }
+
+            // 3. Save name / phone FIRST and on their own, so a problem
+            //    with the Login ID can never stop a spelling fix.
+            const plain = {};
+
+            if ("full_name" in changes) {
+                plain.full_name = changes.full_name;
+            }
+
+            if ("phone" in changes) {
+                plain.phone = changes.phone;
+            }
+
+            const hasPlain = Object.keys(plain).length > 0;
+
+            let finalRow = {
+                full_name: facilitator.full_name,
+                student_id: facilitator.student_id,
+                phone: facilitator.phone
+            };
+
+            let idNotice = "";
+
+            if (hasPlain) {
+
+                const savedPlain =
+                    await saveFacilitatorUpdate(facilitator.id, plain);
+
+                if (savedPlain.error) {
+                    console.error("Edit facilitator error:", savedPlain.error);
+                    editMessage.textContent =
+                        "Could not save. " +
+                        describeSaveError(savedPlain.error);
+                    return;
+                }
+
+                finalRow = savedPlain.row;
+            }
+
+            // 4. Login ID as a separate step, then prove login still works
+            if ("student_id" in changes) {
+
+                const savedId =
+                    await saveFacilitatorUpdate(
+                        facilitator.id,
+                        { student_id: newId }
+                    );
+
+                if (savedId.error) {
+
+                    console.error("Edit login ID error:", savedId.error);
+
+                    // Keep any name / phone fix that did succeed
+                    facilitator.full_name = finalRow.full_name;
+                    facilitator.phone = finalRow.phone;
+                    searchInput.dispatchEvent(new Event("input"));
+
+                    editMessage.textContent =
+                        (hasPlain ? "Name/phone were saved. " : "") +
+                        "The Login ID was NOT changed. " +
+                        describeSaveError(savedId.error);
+                    return;
+                }
+
+                finalRow = savedId.row;
+
+                const after = await lookupLoginEmail(newId);
+
+                if (after.error || after.email !== oldEmail) {
+
+                    // The login system does not follow the new ID.
+                    // Undo the ID change so the facilitator is not locked out.
+                    const undone =
+                        await saveFacilitatorUpdate(
+                            facilitator.id,
+                            { student_id: oldId }
+                        );
+
+                    if (undone.error) {
+                        editMessage.textContent =
+                            "WARNING: the ID was changed to " + newId +
+                            " but the login check failed and it could not be undone automatically. " +
+                            "Set the Login ID back to " + oldId +
+                            " (or contact the developer) before the facilitator tries to log in.";
+                        await loadFacilitators();
+                        return;
+                    }
+
+                    finalRow = undone.row;
+
+                    idNotice =
+                        " The Login ID was NOT changed: the login system could not be updated safely for the new ID, so " +
+                        oldId + " is still the login ID.";
+                }
+            }
+
+            // 5. Update the page without reloading everything
+            facilitator.full_name = finalRow.full_name;
+            facilitator.student_id = finalRow.student_id;
+            facilitator.phone = finalRow.phone;
+
+            const onlyIdBlocked =
+                idNotice &&
+                !("full_name" in changes) &&
+                !("phone" in changes);
+
+            closeEditFacilitator();
+            searchInput.dispatchEvent(new Event("input"));
+
+            showPageMessage(
+                onlyIdBlocked
+                    ? "No changes were saved." + idNotice
+                    : "Facilitator details updated." + idNotice,
+                !!onlyIdBlocked
+            );
+
+        } catch (error) {
+
+            console.error("Edit facilitator error:", error);
+            editMessage.textContent =
+                "Something went wrong. Please check the facilitator's details and try again.";
+
+        } finally {
+
+            saveEditBtn.disabled = false;
+            saveEditBtn.textContent = "Save Changes";
+        }
+    }
+);
+
+
 
 
 /* =========================
