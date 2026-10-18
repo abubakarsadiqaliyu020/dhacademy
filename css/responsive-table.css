@@ -1,0 +1,89 @@
+/* Shared: opt-in stacked-card layout for wide tables on phones.
+   Add class="stack-mobile" to a <table>. Cell labels are filled in
+   from the table headers by js/responsive-table.js. */
+
+@media (max-width: 700px) {
+
+    .table-container:has(> table.stack-mobile) {
+        background: transparent;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+    table.stack-mobile {
+        display: block;
+        min-width: 0;
+        width: 100%;
+    }
+
+    table.stack-mobile thead {
+        position: absolute;
+        left: -9999px;
+    }
+
+    table.stack-mobile tbody {
+        display: block;
+    }
+
+    table.stack-mobile tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        padding: 6px 14px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    table.stack-mobile td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        padding: 8px 0;
+        text-align: right;
+        overflow-wrap: anywhere;
+        border-bottom: 1px solid #eee;
+    }
+
+    table.stack-mobile td:last-child {
+        border-bottom: 0;
+    }
+
+    table.stack-mobile td[data-label]::before {
+        content: attr(data-label);
+        flex: 0 0 34%;
+        font-weight: bold;
+        font-size: 13px;
+        color: #6b7280;
+        text-align: left;
+    }
+
+    table.stack-mobile td[colspan] {
+        display: block;
+        text-align: center;
+    }
+
+    table.stack-mobile td[colspan]::before {
+        content: none;
+    }
+
+    table.stack-mobile td button,
+    table.stack-mobile td a.button,
+    table.stack-mobile td .action-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 14px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    table.stack-mobile td:has(button) {
+        justify-content: flex-end;
+    }
+
+    table.stack-mobile td:has(button)::before {
+        margin-right: auto;
+    }
+}

@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="../favicon.png">
 
     <link rel="stylesheet" href="facilitators.css">
+    <link rel="stylesheet" href="../css/responsive-table.css">
 </head>
 
 <body>
@@ -28,6 +29,10 @@
 
     <main class="page-container">
 
+        <div class="back-row">
+            <a href="dashboard.html">&larr; Back to Admin Dashboard</a>
+        </div>
+
         <div class="page-heading">
 
             <div>
@@ -36,7 +41,6 @@
                 <p>
                     Add and manage Development Hub facilitators.
                 </p>
-                <p><a class="back-dashboard-link" href="dashboard.html">← Back to Admin Dashboard</a></p>
             </div>
 
             <button
@@ -65,7 +69,7 @@
 
         <div class="table-container">
 
-            <table>
+            <table class="stack-mobile">
 
                 <thead>
 
@@ -295,6 +299,7 @@
 
     <script src="../js/supabase.js"></script>
 
+    <script src="../js/responsive-table.js"></script>
     <script src="facilitators.js"></script>
 
 </body>

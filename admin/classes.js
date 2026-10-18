@@ -497,21 +497,24 @@ function displayClasses(classes) {
 
                 <td>
 
-                    <button
-                        type="button"
-                        class="action-btn"
-                        onclick="manageClass('${escapeHtml(classItem.id)}')"
-                    >
-                        Manage
-                    </button>
+                    <div class="class-actions">
 
-                    <button
-                        type="button"
-                        class="action-btn delete-class-btn"
-                        onclick="deleteClass('${escapeHtml(classItem.id)}')"
-                    >
-                        Delete
-                    </button>
+                        <button
+                            class="action-btn"
+                            onclick="manageClass('${escapeHtml(classItem.id)}')"
+                        >
+                            Manage
+                        </button>
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            data-delete-class="${escapeHtml(classItem.id)}"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
 
                 </td>
 
@@ -543,75 +546,6 @@ function manageClass(classId) {
         encodeURIComponent(classId);
 }
 
-
-// ========================================
-// SAFE CLASS DELETION
-// Only deletes an empty class; dependent academic records are preserved.
-// ========================================
-async function deleteClass(classId) {
-    const classItem = allClasses.find(function (item) {
-        return String(item.id) === String(classId);
-    });
-    if (!classItem) {
-        window.alert("This class could not be found. Refresh the page and try again.");
-        return;
-    }
-
-    const confirmed = window.confirm(
-        `Delete the class "${classItem.name}"?\n\n` +
-        "Deletion is allowed only when the class has no enrolled students or modules. " +
-        "Student and facilitator accounts will not be deleted."
-    );
-    if (!confirmed) return;
-
-    const deleteButtons = Array.from(document.querySelectorAll(".delete-class-btn"));
-    deleteButtons.forEach(function (button) { button.disabled = true; });
-
-    try {
-        const [enrolmentsResult, modulesResult] = await Promise.all([
-            supabaseClient.from("class_students")
-                .select("class_id", { count: "exact", head: true })
-                .eq("class_id", classItem.id),
-            supabaseClient.from("modules")
-                .select("id", { count: "exact", head: true })
-                .eq("class_id", classItem.id)
-        ]);
-        if (enrolmentsResult.error || modulesResult.error) {
-            throw enrolmentsResult.error || modulesResult.error;
-        }
-
-        const enrolmentCount = enrolmentsResult.count || 0;
-        const moduleCount = modulesResult.count || 0;
-        if (enrolmentCount > 0 || moduleCount > 0) {
-            window.alert(
-                `Class "${classItem.name}" was not deleted because it has dependent records.\n\n` +
-                `Enrolled students: ${enrolmentCount}\nModules: ${moduleCount}\n\n` +
-                "To protect learning materials, assignments, submissions, and results, " +
-                "use an approved archive/data-management process."
-            );
-            return;
-        }
-
-        const { error } = await supabaseClient.from("classes")
-            .delete().eq("id", classItem.id);
-        if (error) throw error;
-
-        message.textContent = `Class "${classItem.name}" was deleted successfully.`;
-        allClasses = allClasses.filter(function (item) {
-            return String(item.id) !== String(classItem.id);
-        });
-        await loadClasses();
-    } catch (error) {
-        console.error("Delete class error:", error);
-        window.alert(
-            "Unable to delete this class. The database may have blocked the operation. " +
-            "No dependent records should be removed. Details: " +
-            (error && error.message ? error.message : "Unknown error")
-        );
-    } finally {
-        deleteButtons.forEach(function (button) { button.disabled = false; });
-    }
-}
 
 // ========================================
 // SEARCH
@@ -704,6 +638,334 @@ logoutBtn.addEventListener(
         }
     }
 );
+
+
+// ========================================
+// DELETE / ARCHIVE CLASS
+// Safe rules:
+//  - Only a class with NO dependent records is deleted.
+//  - A class with students, modules, materials, assignments or
+//    submissions is never deleted; it can be archived instead
+//    (classes.active = false) and restored later.
+//  - Student/facilitator accounts are never touched.
+// ========================================
+
+const deleteModal = document.getElementById("deleteModal");
+const deleteClassName = document.getElementById("deleteClassName");
+const deleteBody = document.getElementById("deleteBody");
+const closeDeleteModal = document.getElementById("closeDeleteModal");
+const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+const archiveClassBtn = document.getElementById("archiveClassBtn");
+const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+let deleteTarget = null;
+let deleteReturnFocus = null;
+
+
+function showMessage(text, isError) {
+    message.textContent = text;
+    message.className = isError ? "error-message" : "success-message";
+}
+
+
+// Counts everything that depends on a class. Any failed request
+// throws, so a failed check can never be mistaken for "no records".
+async function countClassDependencies(classId) {
+
+    const result = {
+        students: 0,
+        modules: 0,
+        materials: 0,
+        assignments: 0,
+        submissions: 0
+    };
+
+    const studentsReq = await supabaseClient
+        .from("class_students")
+        .select("id", { count: "exact", head: true })
+        .eq("class_id", classId);
+
+    if (studentsReq.error) throw studentsReq.error;
+    result.students = studentsReq.count || 0;
+
+    const modulesReq = await supabaseClient
+        .from("modules")
+        .select("id")
+        .eq("class_id", classId);
+
+    if (modulesReq.error) throw modulesReq.error;
+
+    const moduleIds = (modulesReq.data || []).map(function (m) {
+        return m.id;
+    });
+
+    result.modules = moduleIds.length;
+
+    if (moduleIds.length === 0) return result;
+
+    const [materialsReq, assignmentsReq] = await Promise.all([
+        supabaseClient
+            .from("resources")
+            .select("id", { count: "exact", head: true })
+            .in("module_id", moduleIds),
+        supabaseClient
+            .from("assignments")
+            .select("id")
+            .in("module_id", moduleIds)
+    ]);
+
+    if (materialsReq.error) throw materialsReq.error;
+    if (assignmentsReq.error) throw assignmentsReq.error;
+
+    result.materials = materialsReq.count || 0;
+
+    const assignmentIds = (assignmentsReq.data || []).map(function (a) {
+        return a.id;
+    });
+
+    result.assignments = assignmentIds.length;
+
+    if (assignmentIds.length > 0) {
+        const submissionsReq = await supabaseClient
+            .from("submissions")
+            .select("id", { count: "exact", head: true })
+            .in("assignment_id", assignmentIds);
+
+        if (submissionsReq.error) throw submissionsReq.error;
+        result.submissions = submissionsReq.count || 0;
+    }
+
+    return result;
+}
+
+
+function totalDependencies(deps) {
+    return (
+        deps.students + deps.modules + deps.materials +
+        deps.assignments + deps.submissions
+    );
+}
+
+
+function setDialogButtons(state) {
+    cancelDeleteBtn.disabled = false;
+    archiveClassBtn.hidden = !state.archive;
+    confirmDeleteBtn.hidden = !state.remove;
+    archiveClassBtn.disabled = false;
+    confirmDeleteBtn.disabled = false;
+    if (state.archive) archiveClassBtn.textContent = state.archive;
+}
+
+
+function closeDeleteDialog() {
+    deleteModal.style.display = "none";
+    deleteTarget = null;
+    if (deleteReturnFocus && deleteReturnFocus.focus) {
+        deleteReturnFocus.focus();
+    }
+}
+
+
+async function openDeleteDialog(classId, trigger) {
+
+    const classItem = allClasses.find(function (c) {
+        return c.id === classId;
+    });
+
+    if (!classItem) {
+        showMessage("Class not found. Please refresh the page.", true);
+        return;
+    }
+
+    deleteTarget = classItem;
+    deleteReturnFocus = trigger || null;
+
+    deleteClassName.textContent = classItem.name;
+    deleteBody.textContent = "Checking records linked to this class...";
+    setDialogButtons({});
+    deleteModal.style.display = "flex";
+    cancelDeleteBtn.focus();
+
+    let deps;
+
+    try {
+        deps = await countClassDependencies(classId);
+    } catch (error) {
+        console.error("Dependency check error:", error);
+        if (deleteTarget !== classItem) return;
+        deleteBody.innerHTML =
+            '<div class="delete-warning">Unable to check this class\'s records, ' +
+            'so nothing can be deleted safely right now. Please try again.</div>';
+        setDialogButtons({});
+        return;
+    }
+
+    if (deleteTarget !== classItem) return;
+
+    renderDeleteDialog(classItem, deps);
+}
+
+
+function renderDeleteDialog(classItem, deps) {
+
+    if (totalDependencies(deps) === 0) {
+        deleteBody.innerHTML =
+            '<div class="delete-ok">This class has no students, modules, ' +
+            'materials, assignments or submissions. It can be deleted.</div>' +
+            '<p>This cannot be undone. Are you sure you want to delete ' +
+            'this class?</p>' +
+            (classItem.active
+                ? ''
+                : '<p>This class is archived. You can also restore it instead.</p>');
+        setDialogButtons({
+            remove: true,
+            archive: classItem.active ? "" : "Restore class"
+        });
+        return;
+    }
+
+    const lines = [];
+    if (deps.students) lines.push(deps.students + " enrolled student(s)");
+    if (deps.modules) lines.push(deps.modules + " module(s)");
+    if (deps.materials) lines.push(deps.materials + " learning material(s)");
+    if (deps.assignments) lines.push(deps.assignments + " assignment(s)");
+    if (deps.submissions) lines.push(deps.submissions + " student submission(s)");
+
+    deleteBody.innerHTML =
+        '<div class="delete-warning"><strong>This class cannot be deleted.</strong> ' +
+        'It has linked records:<ul>' +
+        lines.map(function (line) {
+            return "<li>" + escapeHtml(line) + "</li>";
+        }).join("") +
+        '</ul>Deleting it would risk losing student work, marks and feedback.</div>' +
+        '<p>' +
+        (classItem.active
+            ? "You can archive the class instead. It is marked Inactive and all records are kept. You can restore it later."
+            : "This class is already archived. You can restore it to make it Active again.") +
+        '</p>';
+
+    setDialogButtons({
+        archive: classItem.active ? "Archive class" : "Restore class"
+    });
+}
+
+
+async function archiveOrRestoreClass() {
+
+    if (!deleteTarget) return;
+
+    const classItem = deleteTarget;
+    const makeActive = !classItem.active;
+
+    archiveClassBtn.disabled = true;
+    cancelDeleteBtn.disabled = true;
+
+    const { data, error } = await supabaseClient
+        .from("classes")
+        .update({ active: makeActive })
+        .eq("id", classItem.id)
+        .select("id");
+
+    if (error || !data || data.length === 0) {
+        console.error("Archive class error:", error);
+        archiveClassBtn.disabled = false;
+        cancelDeleteBtn.disabled = false;
+        deleteBody.insertAdjacentHTML(
+            "beforeend",
+            '<div class="delete-warning">Unable to update this class. ' +
+            'You may not have permission, or it no longer exists.</div>'
+        );
+        return;
+    }
+
+    classItem.active = makeActive;
+    closeDeleteDialog();
+    searchInput.dispatchEvent(new Event("input"));
+    showMessage(
+        makeActive
+            ? 'Class "' + classItem.name + '" restored.'
+            : 'Class "' + classItem.name + '" archived. Its records were kept.',
+        false
+    );
+}
+
+
+async function deleteClassPermanently() {
+
+    if (!deleteTarget) return;
+
+    const classItem = deleteTarget;
+
+    confirmDeleteBtn.disabled = true;
+    cancelDeleteBtn.disabled = true;
+    confirmDeleteBtn.textContent = "Deleting...";
+
+    try {
+        // Re-check right before deleting in case records were added
+        // after the dialog opened.
+        const deps = await countClassDependencies(classItem.id);
+
+        if (totalDependencies(deps) > 0) {
+            renderDeleteDialog(classItem, deps);
+            return;
+        }
+
+        const { data, error } = await supabaseClient
+            .from("classes")
+            .delete()
+            .eq("id", classItem.id)
+            .select("id");
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            throw new Error("No rows were deleted.");
+        }
+
+        allClasses = allClasses.filter(function (c) {
+            return c.id !== classItem.id;
+        });
+        delete studentCounts[classItem.id];
+
+        closeDeleteDialog();
+        searchInput.dispatchEvent(new Event("input"));
+        showMessage('Class "' + classItem.name + '" deleted.', false);
+
+    } catch (error) {
+        console.error("Delete class error:", error);
+        deleteBody.insertAdjacentHTML(
+            "beforeend",
+            '<div class="delete-warning">The class was not deleted. ' +
+            'You may not have permission, or other records still depend on it.</div>'
+        );
+    } finally {
+        confirmDeleteBtn.disabled = false;
+        cancelDeleteBtn.disabled = false;
+        confirmDeleteBtn.textContent = "Delete permanently";
+    }
+}
+
+
+classesTable.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-delete-class]");
+    if (!button) return;
+    openDeleteDialog(button.getAttribute("data-delete-class"), button);
+});
+
+closeDeleteModal.addEventListener("click", closeDeleteDialog);
+cancelDeleteBtn.addEventListener("click", closeDeleteDialog);
+archiveClassBtn.addEventListener("click", archiveOrRestoreClass);
+confirmDeleteBtn.addEventListener("click", deleteClassPermanently);
+
+deleteModal.addEventListener("click", function (event) {
+    if (event.target === deleteModal) closeDeleteDialog();
+});
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && deleteModal.style.display === "flex") {
+        closeDeleteDialog();
+    }
+});
 
 
 // ========================================

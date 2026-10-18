@@ -331,5 +331,20 @@ th {
 
 
 
-.back-dashboard-link { display: inline-block; color: #1e3a8a; font-size: .92rem; text-decoration: none; margin-top: 4px; }
-.back-dashboard-link:hover { text-decoration: underline; }
+/* Back navigation */
+.back-row {
+    margin-bottom: 16px;
+}
+
+.back-row a {
+    display: inline-block;
+    padding: 8px 0;
+    color: #1e3a8a;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-row a:hover,
+.back-row a:focus {
+    text-decoration: underline;
+}

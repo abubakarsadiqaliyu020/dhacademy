@@ -260,6 +260,14 @@ function displayStudents(list) {
 
             <td>
 
+                <div class="row-actions">
+                <button
+                    type="button"
+                    class="edit-student-btn"
+                    data-id="${escapeHtml(student.id)}"
+                >
+                    Edit
+                </button>
                 <button
                     type="button"
                     class="reset-pin-btn"
@@ -280,6 +288,7 @@ function displayStudents(list) {
                             : "Activate"
                     }
                 </button>
+                </div>
 
             </td>
 
@@ -290,6 +299,23 @@ function displayStudents(list) {
 
     });
 
+
+    // ========================================
+    // EDIT STUDENT BUTTONS
+    // ========================================
+    document
+        .querySelectorAll(".edit-student-btn")
+        .forEach(function (button) {
+            button.addEventListener(
+                "click",
+                function () {
+                    openEditStudent(
+                        button.dataset.id,
+                        button
+                    );
+                }
+            );
+        });
 
     // ========================================
     // RESET PIN BUTTONS
@@ -1016,6 +1042,374 @@ window.addEventListener(
 
         }
 
+    }
+);
+
+
+// ========================================
+// EDIT STUDENT (correct name, Student ID, phone)
+// Admin-only page. The database policy on "profiles" is what really
+// restricts who may change these fields.
+// ========================================
+const editStudentModal =
+    document.getElementById("editStudentModal");
+const editStudentForm =
+    document.getElementById("editStudentForm");
+const closeEditModal =
+    document.getElementById("closeEditModal");
+const editFullName =
+    document.getElementById("editFullName");
+const editStudentId =
+    document.getElementById("editStudentId");
+const editPhone =
+    document.getElementById("editPhone");
+const editIdWarning =
+    document.getElementById("editIdWarning");
+const editMessage =
+    document.getElementById("editMessage");
+const saveEditBtn =
+    document.getElementById("saveEditBtn");
+
+let editingStudent = null;
+let editReturnFocus = null;
+
+
+function showPageMessage(text, isError) {
+    message.textContent = text;
+    message.className =
+        isError
+            ? "error-message"
+            : "success-message";
+}
+
+
+function openEditStudent(studentId, trigger) {
+
+    const student =
+        students.find(
+            function (item) {
+                return item.id === studentId;
+            }
+        );
+
+    if (!student) {
+        showPageMessage(
+            "Student not found. Please refresh the page.",
+            true
+        );
+        return;
+    }
+
+    editingStudent = student;
+    editReturnFocus = trigger || null;
+
+    editFullName.value = student.full_name || "";
+    editStudentId.value = student.student_id || "";
+    editPhone.value = student.phone || "";
+    editIdWarning.hidden = true;
+    editMessage.textContent = "";
+    saveEditBtn.disabled = false;
+    saveEditBtn.textContent = "Save Changes";
+
+    editStudentModal.style.display = "flex";
+    editFullName.focus();
+}
+
+
+function closeEditStudent() {
+
+    editStudentModal.style.display = "none";
+    editingStudent = null;
+
+    if (editReturnFocus && editReturnFocus.focus) {
+        editReturnFocus.focus();
+    }
+}
+
+
+editStudentId.addEventListener(
+    "input",
+    function () {
+        editIdWarning.hidden =
+            !editingStudent ||
+            editStudentId.value.trim() ===
+                (editingStudent.student_id || "");
+    }
+);
+
+closeEditModal.addEventListener("click", closeEditStudent);
+
+editStudentModal.addEventListener(
+    "click",
+    function (event) {
+        if (event.target === editStudentModal) {
+            closeEditStudent();
+        }
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+        if (
+            event.key === "Escape" &&
+            editStudentModal.style.display === "flex"
+        ) {
+            closeEditStudent();
+        }
+    }
+);
+
+
+// Looks up the hidden login email for a Login ID (the same function the
+// login page uses). Returns {email} or {error}.
+async function lookupLoginEmail(loginId) {
+
+    const { data, error } =
+        await supabaseClient.rpc(
+            "get_login_email",
+            {
+                student_id_input: loginId
+            }
+        );
+
+    if (error) {
+        console.error("Login lookup error:", error);
+        return { error: error };
+    }
+
+    return { email: data || null };
+}
+
+
+async function saveStudentUpdate(id, fields) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("profiles")
+            .update(fields)
+            .eq("id", id)
+            .eq("role", "student")
+            .select("id, student_id, full_name, phone");
+
+    if (error || !data || data.length !== 1) {
+        return { error: error || new Error("No row updated") };
+    }
+
+    return { row: data[0] };
+}
+
+
+editStudentForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        if (!editingStudent) {
+            return;
+        }
+
+        const student = editingStudent;
+
+        const fullName =
+            editFullName.value.replace(/\s+/g, " ").trim();
+        const newId =
+            editStudentId.value.trim();
+        const phone =
+            editPhone.value.trim();
+
+        const oldId = student.student_id || "";
+
+        const changes = {};
+
+        if (fullName !== (student.full_name || "")) {
+            changes.full_name = fullName;
+        }
+
+        if (newId !== oldId) {
+            changes.student_id = newId;
+        }
+
+        if (phone !== (student.phone || "")) {
+            changes.phone = phone || null;
+        }
+
+        // ----- validation (ID and phone only when they are being changed) -----
+        if (!fullName) {
+            editMessage.textContent = "Full name cannot be empty.";
+            return;
+        }
+
+        if (!newId) {
+            editMessage.textContent = "Student ID cannot be empty.";
+            return;
+        }
+
+        if (
+            "student_id" in changes &&
+            /\s/.test(newId)
+        ) {
+            editMessage.textContent =
+                "Student ID cannot contain spaces.";
+            return;
+        }
+
+        if (
+            "phone" in changes &&
+            phone &&
+            !/^[0-9+()\-\s]{1,20}$/.test(phone)
+        ) {
+            editMessage.textContent =
+                "Phone number may only contain digits, spaces, + ( ) and -.";
+            return;
+        }
+
+        if (Object.keys(changes).length === 0) {
+            editMessage.textContent = "No changes to save.";
+            return;
+        }
+
+        saveEditBtn.disabled = true;
+        saveEditBtn.textContent = "Saving...";
+        editMessage.textContent = "";
+
+        let oldEmail = null;
+
+        try {
+
+            if ("student_id" in changes) {
+
+                // 1. The new ID must not belong to anyone else
+                //    (login lookup covers every account type).
+                const pattern =
+                    newId.replace(/[\\%_]/g, "\\$&");
+
+                const taken =
+                    await supabaseClient
+                        .from("profiles")
+                        .select("id")
+                        .ilike("student_id", pattern)
+                        .neq("id", student.id)
+                        .limit(1);
+
+                if (taken.error) {
+                    console.error("ID check error:", taken.error);
+                    editMessage.textContent =
+                        "Could not check whether that ID is already used. Nothing was changed.";
+                    return;
+                }
+
+                if (taken.data && taken.data.length > 0) {
+                    editMessage.textContent =
+                        "That Student ID is already used by another account.";
+                    return;
+                }
+
+                // 2. Remember which login account the OLD ID reaches,
+                //    so we can prove the NEW ID still reaches it.
+                const before = await lookupLoginEmail(oldId);
+
+                if (before.error || !before.email) {
+                    editMessage.textContent =
+                        "Could not verify this student's login link, so the Student ID was not changed.";
+                    return;
+                }
+
+                oldEmail = before.email;
+
+                if (
+                    !window.confirm(
+                        "Change this student's ID from " + oldId +
+                        " to " + newId + "?\n\n" +
+                        "From now on they must log in with the new ID. " +
+                        "Their password stays the same."
+                    )
+                ) {
+                    return;
+                }
+            }
+
+            // 3. Save
+            const saved =
+                await saveStudentUpdate(student.id, changes);
+
+            if (saved.error) {
+                console.error("Edit student error:", saved.error);
+                editMessage.textContent =
+                    saved.error.code === "23505"
+                        ? "That Student ID is already used by another account."
+                        : "Could not save. You may not have permission, or the student no longer exists.";
+                return;
+            }
+
+            let finalRow = saved.row;
+            let idNotice = "";
+
+            // 4. After an ID change, prove that login still works
+            if ("student_id" in changes) {
+
+                const after = await lookupLoginEmail(newId);
+
+                if (after.error || after.email !== oldEmail) {
+
+                    // The login system does not follow the new ID.
+                    // Undo the ID change so the student is not locked out.
+                    const undone =
+                        await saveStudentUpdate(
+                            student.id,
+                            { student_id: oldId }
+                        );
+
+                    if (undone.error) {
+                        editMessage.textContent =
+                            "WARNING: the ID was changed to " + newId +
+                            " but the login check failed and it could not be undone automatically. " +
+                            "Set the Student ID back to " + oldId +
+                            " (or contact the developer) before the student tries to log in.";
+                        await loadStudents();
+                        return;
+                    }
+
+                    finalRow = undone.row;
+
+                    idNotice =
+                        " The Student ID was NOT changed: the login system could not be updated safely for the new ID, so " +
+                        oldId + " is still the login ID.";
+                }
+            }
+
+            // 5. Update the page without reloading everything
+            student.full_name = finalRow.full_name;
+            student.student_id = finalRow.student_id;
+            student.phone = finalRow.phone;
+
+            const onlyIdBlocked =
+                idNotice &&
+                !("full_name" in changes) &&
+                !("phone" in changes);
+
+            closeEditStudent();
+            searchInput.dispatchEvent(new Event("input"));
+
+            showPageMessage(
+                onlyIdBlocked
+                    ? "No changes were saved." + idNotice
+                    : "Student details updated." + idNotice,
+                !!onlyIdBlocked
+            );
+
+        } catch (error) {
+
+            console.error("Edit student error:", error);
+            editMessage.textContent =
+                "Something went wrong. Please check the student's details and try again.";
+
+        } finally {
+
+            saveEditBtn.disabled = false;
+            saveEditBtn.textContent = "Save Changes";
+        }
     }
 );
 

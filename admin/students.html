@@ -11,6 +11,7 @@
     <link rel="icon" type="image/png" href="../favicon.png">
 
     <link rel="stylesheet" href="students.css">
+    <link rel="stylesheet" href="../css/responsive-table.css">
 
 </head>
 
@@ -46,6 +47,10 @@
 
     <main class="page-container">
 
+        <div class="back-row">
+            <a href="dashboard.html">&larr; Back to Admin Dashboard</a>
+        </div>
+
 
         <!-- Page Heading -->
 
@@ -58,7 +63,6 @@
                 <p>
                     Add and manage Development Hub students.
                 </p>
-                <p><a class="back-dashboard-link" href="dashboard.html">← Back to Admin Dashboard</a></p>
 
             </div>
 
@@ -98,7 +102,7 @@
 
         <div class="table-container">
 
-            <table>
+            <table class="stack-mobile">
 
                 <thead>
 
@@ -359,6 +363,79 @@
 
 
     <!-- =========================
+         EDIT STUDENT MODAL
+    ========================== -->
+    <div
+        id="editStudentModal"
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editStudentTitle"
+    >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="editStudentTitle">
+                    Edit Student
+                </h2>
+                <button
+                    type="button"
+                    id="closeEditModal"
+                    aria-label="Close"
+                >
+                    &times;
+                </button>
+            </div>
+            <p class="edit-note">
+                Use this to correct spelling mistakes or a wrong Student ID.
+                The password is not changed.
+            </p>
+            <form id="editStudentForm" novalidate>
+                <label for="editFullName">
+                    Full Name
+                </label>
+                <input
+                    type="text"
+                    id="editFullName"
+                    maxlength="100"
+                    autocomplete="off"
+                >
+                <label for="editStudentId">
+                    Student ID (Login ID)
+                </label>
+                <input
+                    type="text"
+                    id="editStudentId"
+                    maxlength="40"
+                    autocomplete="off"
+                    autocapitalize="off"
+                >
+                <p id="editIdWarning" class="edit-warning" hidden>
+                    Changing the Student ID also changes how this student logs in.
+                    They must use the new ID from now on.
+                </p>
+                <label for="editPhone">
+                    Phone Number
+                </label>
+                <input
+                    type="text"
+                    id="editPhone"
+                    maxlength="20"
+                    inputmode="tel"
+                    autocomplete="off"
+                >
+                <button
+                    type="submit"
+                    id="saveEditBtn"
+                    class="primary-btn full-width"
+                >
+                    Save Changes
+                </button>
+            </form>
+            <p id="editMessage" role="alert"></p>
+        </div>
+    </div>
+
+    <!-- =========================
          SUPABASE
     ======================= -->
 
@@ -366,6 +443,7 @@
 
     <script src="../js/supabase.js"></script>
 
+    <script src="../js/responsive-table.js"></script>
     <script src="students.js"></script>
 
 

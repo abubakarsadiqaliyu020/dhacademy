@@ -1,0 +1,77 @@
+/* Rendered lesson content: headings, lists and tables.
+   Shared by the student module page and the facilitator preview. */
+
+.lesson-content .lesson-h1,
+.lesson-content .lesson-h2,
+.lesson-content .lesson-h3 {
+    color: #1e3a8a;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.lesson-content .lesson-h1 {
+    font-size: 1.4em;
+    margin: 1.3em 0 0.5em;
+}
+
+.lesson-content .lesson-h2 {
+    font-size: 1.2em;
+    margin: 1.2em 0 0.45em;
+}
+
+.lesson-content .lesson-h3 {
+    font-size: 1.05em;
+    margin: 1.1em 0 0.4em;
+}
+
+.lesson-content > :first-child {
+    margin-top: 0;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+    margin: 0 0 16px;
+    padding-left: 1.5em;
+}
+
+.lesson-content li {
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+}
+
+/* Tables scroll sideways inside their own box on narrow screens */
+.lesson-table-wrap {
+    margin: 0 0 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.lesson-table {
+    width: 100%;
+    min-width: max-content;
+    border-collapse: collapse;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.lesson-table th,
+.lesson-table td {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+    min-width: 90px;
+}
+
+.lesson-table th {
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-weight: bold;
+}
+
+.lesson-table tbody tr:nth-child(even) td {
+    background: #f9fafb;
+}
